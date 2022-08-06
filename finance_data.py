@@ -37,6 +37,9 @@ class FinanceData:
             info_url = 'https://stock.xueqiu.com/v5/stock/f10/cn/company.json?symbol=%s' % code
             info_response = self.session.get(url=info_url, headers=self.headers)
             info_data = info_response.json()
+            listed_date = info_data['data']['company']['listed_date']
+            if not listed_date:
+                listed_date = time.time() * 1000
             time.sleep(2)
 
             url = (
@@ -51,14 +54,14 @@ class FinanceData:
                 continue
             temp_data = []
             for data_item in data:
-                if data_item['report_date'] < info_data['data']['company']['listed_date']:
+                if data_item['report_date'] < listed_date:
                     break  # 剔除上市之前的年报
                 temp_dict = {
                     '代码': code,
                     '名称': quote_name,
                     '行业': info_data['data']['company']['affiliate_industry']['ind_name'],
                     '上市日期': time.strftime(
-                        "%Y-%m-%d", time.localtime(info_data['data']['company']['listed_date'] / 1000)
+                        "%Y-%m-%d", time.localtime(listed_date / 1000)
                     ),
                 }
                 for key in constant.column_name.keys():
