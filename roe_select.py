@@ -7,7 +7,7 @@ for file in os.listdir('temp'):
     try:
         data = pd.read_csv('temp/' + file)
         data.sort_index(ascending=False, inplace=True)
-        data = data[['代码', '名称', '上市日期', '报告时间', '净资产收益率']]
+        data = data[['代码', '名称', '上市日期', '报告时间', '净资产收益率','资产负债率','销售毛利率']]
         data['上市日期'] = pd.to_datetime(data['上市日期'])
         data['报告时间_Date'] = pd.to_datetime(data['报告时间'])
         data = data[data['报告时间_Date'] > data['上市日期']]
@@ -71,7 +71,7 @@ for file in os.listdir('temp'):
     try:
         data = pd.read_csv('temp/' + file)
         data.sort_index(ascending=False, inplace=True)
-        data = data[['代码', '名称', '上市日期', '报告时间', '净资产收益率']]
+        data = data[['代码', '名称', '上市日期', '报告时间', '净资产收益率','资产负债率','销售毛利率']]
         data['上市日期'] = pd.to_datetime(data['上市日期'])
         data['报告时间_Date'] = pd.to_datetime(data['报告时间'])
         data = data[data['报告时间_Date'] > data['上市日期']]
