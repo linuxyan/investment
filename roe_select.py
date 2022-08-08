@@ -16,9 +16,9 @@ for file in os.listdir('temp'):
         data['10年平均ROE'] = data['净资产收益率'].rolling(10).mean()
         data['10年最低ROE'] = data['净资产收益率'].rolling(10).min()
         data['10年平均资产负债率'] = data['资产负债率'].rolling(10).mean()
-        data['10年平均资产负债率'] = data['资产负债率'].rolling(10).max()
+        data['10年最大资产负债率'] = data['资产负债率'].rolling(10).max()
         data['10年平均销售毛利率'] = data['销售毛利率'].rolling(10).mean()
-        data['10年平均销售毛利率'] = data['销售毛利率'].rolling(10).min()
+        data['10年最小销售毛利率'] = data['销售毛利率'].rolling(10).min()
 
         data = data[(data['10年平均ROE'] >= 20) & (data['10年最低ROE'] >= 15) & (data['10年平均资产负债率'] < 50) & (data['10年平均销售毛利率'] > 50)]
 
@@ -79,9 +79,9 @@ for file in os.listdir('temp'):
         data['5年平均ROE'] = data['净资产收益率'].rolling(5).mean()
         data['5年最低ROE'] = data['净资产收益率'].rolling(5).min()
         data['5年平均资产负债率'] = data['资产负债率'].rolling(5).mean()
-        data['5年平均资产负债率'] = data['资产负债率'].rolling(5).max()
+        data['5年最大资产负债率'] = data['资产负债率'].rolling(5).max()
         data['5年平均销售毛利率'] = data['销售毛利率'].rolling(5).mean()
-        data['5年平均销售毛利率'] = data['销售毛利率'].rolling(5).min()
+        data['5年最小销售毛利率'] = data['销售毛利率'].rolling(5).min()
 
         data = data[(data['5年平均ROE'] >= 20) & (data['5年最低ROE'] >= 15) & (data['5年平均资产负债率'] < 50) & (data['5年平均销售毛利率'] > 50)]
 
