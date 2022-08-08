@@ -54,15 +54,13 @@ class FinanceData:
                 continue
             temp_data = []
             for data_item in data:
-                if data_item['report_date'] < listed_date:
-                    break  # 剔除上市之前的年报
+                # if data_item['report_date'] < listed_date:
+                #     break  # 剔除上市之前的年报
                 temp_dict = {
                     '代码': code,
                     '名称': quote_name,
                     '行业': info_data['data']['company']['affiliate_industry']['ind_name'],
-                    '上市日期': time.strftime(
-                        "%Y-%m-%d", time.localtime(listed_date / 1000)
-                    ),
+                    '上市日期': time.strftime("%Y-%m-%d", time.localtime(listed_date / 1000)),
                 }
                 for key in constant.column_name.keys():
                     value = data_item[key]
@@ -73,7 +71,8 @@ class FinanceData:
                     temp_dict[constant.column_name[key]] = value
                 temp_data.append(temp_dict)
             code_data += temp_data
-            pd.DataFrame(temp_data).to_csv('temp/%s.csv' % code, index=False)
+            if temp_data:
+                pd.DataFrame(temp_data).to_csv('temp/%s.csv' % code, index=False)
             time.sleep(3)
 
 

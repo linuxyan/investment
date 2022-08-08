@@ -7,6 +7,7 @@ authors = ["linuxyan <linuxcy@126.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 tushare = "^1.2.85"
+polars = "^0.13.62"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
