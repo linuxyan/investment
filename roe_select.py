@@ -5,9 +5,9 @@ import numpy as np
 import os
 
 pd_list = []
-for file in os.listdir('/Users/yan/Downloads/temp'):
+for file in os.listdir('temp'):
     try:
-        data = pd.read_csv('/Users/yan/Downloads/temp/'+file)
+        data = pd.read_csv('temp/'+file)
         data.sort_index(ascending=False,inplace=True)
         data = data[['代码','名称','上市日期','报告时间','净资产收益率']]
         data['净资产收益率'] = data['净资产收益率'].astype(np.float64)
@@ -17,7 +17,7 @@ for file in os.listdir('/Users/yan/Downloads/temp'):
         data = data.dropna()
         pd_list.append(data)
     except Exception as e:
-        print('/Users/yan/Downloads/temp/'+file, str(e))
+        print('temp/'+file, str(e))
 
 all_data = pd.concat(pd_list)
 all_data[all_data['报告时间'] == '2010-12-31'].sort_values(by='10年平均ROE',ascending=False).to_csv('select/2010-12-31_10.csv',index=False)
@@ -35,9 +35,9 @@ all_data[all_data['报告时间'] == '2021-12-31'].sort_values(by='10年平均RO
 
 
 pd_list = []
-for file in os.listdir('/Users/yan/Downloads/temp'):
+for file in os.listdir('temp'):
     try:
-        data = pd.read_csv('/Users/yan/Downloads/temp/'+file)
+        data = pd.read_csv('temp/'+file)
         data.sort_index(ascending=False,inplace=True)
         data = data[['代码','名称','上市日期','报告时间','净资产收益率']]
         data['净资产收益率'] = data['净资产收益率'].astype(np.float64)
@@ -47,7 +47,7 @@ for file in os.listdir('/Users/yan/Downloads/temp'):
         data = data.dropna()
         pd_list.append(data)
     except Exception as e:
-        print('/Users/yan/Downloads/temp/'+file, str(e))
+        print('temp/'+file, str(e))
 
 all_data = pd.concat(pd_list)
 all_data[all_data['报告时间'] == '2010-12-31'].sort_values(by='5年平均ROE',ascending=False).to_csv('select/2010-12-31_5.csv',index=False)
