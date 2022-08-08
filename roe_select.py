@@ -8,10 +8,13 @@ for file in os.listdir('temp'):
         data = pd.read_csv('temp/'+file)
         data.sort_index(ascending=False,inplace=True)
         data = data[['代码','名称','上市日期','报告时间','净资产收益率']]
+        data['上市日期'] = pd.to_datetime(data['上市日期'])
+        data['报告时间_Date'] = pd.to_datetime(data['报告时间'])
         data['净资产收益率'] = data['净资产收益率'].astype(np.float64)
         data['10年平均ROE'] = data['净资产收益率'].rolling(10).mean()
         data['10年最低ROE'] = data['净资产收益率'].rolling(10).min()
         data = data[(data['10年平均ROE'] >= 20) & (data['10年最低ROE'] >= 15)]
+        data = data[data['报告时间_Date'] > data['上市日期']]
         data = data.dropna()
         pd_list.append(data)
     except Exception as e:
@@ -38,14 +41,18 @@ for file in os.listdir('temp'):
         data = pd.read_csv('temp/'+file)
         data.sort_index(ascending=False,inplace=True)
         data = data[['代码','名称','上市日期','报告时间','净资产收益率']]
+        data['上市日期'] = pd.to_datetime(data['上市日期'])
+        data['报告时间_Date'] = pd.to_datetime(data['报告时间'])
         data['净资产收益率'] = data['净资产收益率'].astype(np.float64)
         data['5年平均ROE'] = data['净资产收益率'].rolling(5).mean()
         data['5年最低ROE'] = data['净资产收益率'].rolling(5).min()
         data = data[(data['5年平均ROE'] >= 20) & (data['5年最低ROE'] >= 15)]
+        data = data[data['报告时间_Date'] > data['上市日期']]
         data = data.dropna()
         pd_list.append(data)
     except Exception as e:
         print('temp/'+file, str(e))
+
 
 all_data = pd.concat(pd_list)
 all_data[all_data['报告时间'] == '2010-12-31'].sort_values(by='5年平均ROE',ascending=False).to_csv('select/2010-12-31_5.csv',index=False)
