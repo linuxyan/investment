@@ -6,8 +6,8 @@ authors = ["linuxyan <linuxcy@126.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-tushare = "^1.2.85"
-polars = "^0.13.62"
+pandas = "^1.5.2"
+requests = "^2.28.2"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
