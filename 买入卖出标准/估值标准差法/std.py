@@ -12,7 +12,8 @@ for _, row in R15.iterrows():
     code = str(row['证券代码']).split('.')[1].lower() + str(row['证券代码']).split('.')[0]
     code_data = pd.read_csv('data/%s.csv' % code)
     code_data_last = code_data[code_data['date'] == code_data['date'].max()]
-    code_data_std = [row['证券代码'], row['证券简称'], code_data_last['date'].iloc[0], code_data_last['pe_ttm'].iloc[0]]
+    pe_ttm_last = code_data_last['pe_ttm'].iloc[0]
+    code_data_std = [row['证券代码'], row['证券简称'], code_data_last['date'].iloc[0], pe_ttm_last]
     for year in year_list:
         start_date = datetime.datetime.now() - datetime.timedelta(weeks=(year * 52))
         start_date_str = start_date.strftime('%Y-%m-%d')
@@ -31,8 +32,9 @@ for _, row in R15.iterrows():
             )
             * 100
         )
+        pe_ratio = str(int((pe_ttm_last / (pettm_mean - pettm_std) - 1) * 100)) + '%'
         mettm_limits = str(round(pettm_mean - pettm_std, 2)) + '~' + str(round(pettm_mean + pettm_std, 2))
-        code_data_std += [pettm_mean, pettm_std, mettm_limits, str(theory_profit) + '%']
+        code_data_std += [pe_ratio,pettm_mean, pettm_std, mettm_limits, str(theory_profit) + '%']
 
     data.append(code_data_std)
 
@@ -43,14 +45,17 @@ data = pd.DataFrame(
         '证券简称',
         '日期',
         'PE_TTM',
+        'PE_TTM_三年估值下限比例',
         '三年PE_TTM均值',
         '三年PE_TTM标准差',
         '三年估值范围',
         '三年理想收益',
+        'PE_TTM_五年估值下限比例',
         '五年PE_TTM均值',
         '五年PE_TTM标准差',
         '五年估值范围',
         '五年理想收益',
+        'PE_TTM_十年估值下限比例',
         '十年PE_TTM均值',
         '十年PE_TTM标准差',
         '十年估值范围',
@@ -64,6 +69,9 @@ data = data[
         '证券简称',
         '日期',
         'PE_TTM',
+        'PE_TTM_三年估值下限比例',
+        'PE_TTM_五年估值下限比例',
+        'PE_TTM_十年估值下限比例',
         '三年估值范围',
         '三年理想收益',
         '五年估值范围',
