@@ -1,41 +1,48 @@
 import pandas as pd
+import numpy as np
 import datetime
 
 R15 = pd.read_csv('2022_R15.csv')
-hold_year = 3  # 持有时间
 increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)
-std_multiple = 1  # 标准差倍数
-year_list = [3, 5, 10]  # 采样年数
+std_multiple = 1.5  # 标准差倍数
+year_list = [3, 5, 7]  # 采样年数
+end_date = datetime.datetime.now()
+# end_date = datetime.datetime.strptime('20221031','%Y%m%d')
+
 
 data = []
 for _, row in R15.iterrows():
-    code = str(row['证券代码']).split('.')[1].lower() + str(row['证券代码']).split('.')[0]
-    code_data = pd.read_csv('data/%s.csv' % code)
-    code_data_last = code_data[code_data['date'] == code_data['date'].max()]
+    code_data = pd.read_csv('data/%s.csv' % row['证券代码'])
+    code_data = code_data[code_data['trade_date'] <= int(end_date.strftime('%Y%m%d'))]
+    code_data_last = code_data[code_data['trade_date'] == code_data['trade_date'].max()]
     pe_ttm_last = code_data_last['pe_ttm'].iloc[0]
-    code_data_std = [row['证券代码'], row['证券简称'], code_data_last['date'].iloc[0], pe_ttm_last]
+    close_last = code_data_last['close'].iloc[0]
+    code_data_std = [row['证券代码'], row['证券简称'], row['跟踪时间'],code_data_last['trade_date'].iloc[0], close_last, pe_ttm_last]
+    fix_data = None
     for year in year_list:
-        start_date = datetime.datetime.now() - datetime.timedelta(weeks=(year * 52))
-        start_date_str = start_date.strftime('%Y-%m-%d')
-        year_data = code_data[code_data['date'] >= start_date_str]
+        start_date = end_date - datetime.timedelta(weeks=(year * 52))
+        year_data = code_data[code_data['trade_date'] >= int(start_date.strftime('%Y%m%d'))]
         pettm_mean = round(year_data['pe_ttm'].mean(), 2)
         pettm_std = round(year_data['pe_ttm'].std() * std_multiple, 2)
 
-        # 业绩收益 = 1 + (年理论收益(increase_ratio) * 持有年数(hold_year))
-        # 估值收益 = (N年平均估值 + N年估值标准差) / (N年平均估值 - N年估值标准差)
-        # 总持有收益 = (业绩收益 * 估值收益 -1) * 100
-        theory_profit = int(
-            (
-                (1 + (hold_year * increase_ratio))
-                * (round(pettm_mean + pettm_std, 2) / round(pettm_mean - pettm_std, 2))
-                - 1
-            )
-            * 100
-        )
-        pe_ratio = str(int((pe_ttm_last / (pettm_mean - pettm_std) - 1) * 100)) + '%'
-        mettm_limits = str(round(pettm_mean - pettm_std, 2)) + '~' + str(round(pettm_mean + pettm_std, 2))
-        code_data_std += [pe_ratio,pettm_mean, pettm_std, mettm_limits, str(theory_profit) + '%']
+        if (pettm_mean - pettm_std) <= 0:
+            print('fix %s %s std()' % (row['证券代码'], row['证券简称']))
+            pettm_std = pettm_mean * 0.75
+            fix_data = '修正标准差'
 
+        pe_limit_low = pettm_mean - pettm_std
+        pe_limit_up = pettm_mean + pettm_std
+        # if pe_limit_low >=45:   # 长期高PE运行的股票，估值范围打7折。
+        #     pe_limit_low = (pettm_mean - pettm_std) * 0.7
+        #     pe_limit_up = (pettm_mean + pettm_std) * 0.7
+        #     fix_data = '修正估值范围'
+
+        pe_buy_ratio = int((pe_ttm_last / pe_limit_low - 1) * 100)
+        pe_sell_ratio = int(pe_ttm_last / pe_limit_up * 100)
+        mettm_limits = str(round(pe_limit_low, 2)) + '~' + str(round(pe_limit_up, 2))
+        code_data_std += [pe_buy_ratio, pe_sell_ratio, pettm_mean, pettm_std, mettm_limits]
+    
+    code_data_std += [fix_data]
     data.append(code_data_std)
 
 data = pd.DataFrame(
@@ -43,47 +50,49 @@ data = pd.DataFrame(
     columns=[
         '证券代码',
         '证券简称',
+        '跟踪时间',
         '日期',
+        '收盘价',
         'PE_TTM',
-        'PE_TTM_三年估值下限比例',
+        '三年估值范围买点比例',
+        '三年估值范围卖点比例',
         '三年PE_TTM均值',
         '三年PE_TTM标准差',
         '三年估值范围',
-        '三年理想收益',
-        'PE_TTM_五年估值下限比例',
+        '五年估值范围买点比例',
+        '五年估值范围卖点比例',
         '五年PE_TTM均值',
         '五年PE_TTM标准差',
         '五年估值范围',
-        '五年理想收益',
-        'PE_TTM_十年估值下限比例',
-        '十年PE_TTM均值',
-        '十年PE_TTM标准差',
-        '十年估值范围',
-        '十年理想收益',
+        '七年估值范围买点比例',
+        '七年估值范围卖点比例',
+        '七年PE_TTM均值',
+        '七年PE_TTM标准差',
+        '七年估值范围',
+        '数据修正',
     ],
 )
 
+data['距离买点'] = np.round(data[['三年估值范围买点比例','五年估值范围买点比例','七年估值范围买点比例']].mean(axis=1),2)
+data['距离卖点'] = np.round(data[['三年估值范围卖点比例','五年估值范围卖点比例','七年估值范围卖点比例']].mean(axis=1),2)
 data = data[
     [
         '证券代码',
         '证券简称',
+        '跟踪时间',
         '日期',
+        '收盘价',
         'PE_TTM',
-        'PE_TTM_三年估值下限比例',
-        'PE_TTM_五年估值下限比例',
-        'PE_TTM_十年估值下限比例',
+        '距离买点',
+        '距离卖点',
         '三年估值范围',
-        '三年理想收益',
         '五年估值范围',
-        '五年理想收益',
-        '十年估值范围',
-        '十年理想收益',
-        '三年PE_TTM均值',
-        '三年PE_TTM标准差',
-        '五年PE_TTM均值',
-        '五年PE_TTM标准差',
-        '十年PE_TTM均值',
-        '十年PE_TTM标准差',
+        '七年估值范围',
+        '数据修正',
     ]
 ]
-data.to_csv('R15_1_std.csv', index=False, encoding='utf_8_sig')
+data.sort_values("距离买点",inplace=True)
+data['距离买点'] = data['距离买点'].astype(str) + '%'
+data['距离卖点'] = data['距离卖点'].astype(str) + '%'
+data.reset_index(drop=True,inplace=True)
+data.to_csv('R15_1_std.csv', encoding='utf_8_sig')
