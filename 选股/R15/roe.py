@@ -11,7 +11,7 @@ pro = ts.pro_api('a44e2a405b4b8abc8373f202480c3bfffdcaa4e7b3b5a35613d851cd')
 end_year = 2021  # 获取结束年报年份
 end_date = str(end_year) + '1231'
 start_date = str(end_year - 9) + '1231'  # 获取年报开始日期 (最近10年)
-list_date = str(end_year - 6) + '1231'  # 获取上市日期(大于7年，年报可以采用3年上市前的数据)
+list_date = str(end_year - 4) + '1231'  # 获取上市日期(大于5年，年报可以采用5年上市前的数据)
 
 print(start_date,end_date,list_date)
 
