@@ -18,7 +18,15 @@ for _, row in R15.iterrows():
     pe_ttm_last = code_data_last['pe_ttm'].iloc[0]
     close_last = code_data_last['close'].iloc[0]
     dv_ttm = code_data_last['dv_ttm'].iloc[0]
-    code_data_std = [row['证券代码'], row['证券简称'], row['跟踪时间'],code_data_last['trade_date'].iloc[0], close_last, dv_ttm, pe_ttm_last]
+    code_data_std = [
+        row['证券代码'],
+        row['证券简称'],
+        row['跟踪时间'],
+        code_data_last['trade_date'].iloc[0],
+        close_last,
+        dv_ttm,
+        pe_ttm_last,
+    ]
     fix_data = None
     for year in year_list:
         start_date = end_date - datetime.timedelta(weeks=(year * 52))
@@ -42,7 +50,7 @@ for _, row in R15.iterrows():
         pe_sell_ratio = int(pe_ttm_last / pe_limit_up * 100)
         mettm_limits = str(round(pe_limit_low, 2)) + '~' + str(round(pe_limit_up, 2))
         code_data_std += [pe_buy_ratio, pe_sell_ratio, pettm_mean, pettm_std, mettm_limits]
-    
+
     code_data_std += [fix_data]
     data.append(code_data_std)
 
@@ -75,8 +83,8 @@ data = pd.DataFrame(
     ],
 )
 
-data['距离买点'] = np.round(data[['三年估值范围买点比例','五年估值范围买点比例','七年估值范围买点比例']].mean(axis=1),2)
-data['距离卖点'] = np.round(data[['三年估值范围卖点比例','五年估值范围卖点比例','七年估值范围卖点比例']].mean(axis=1),2)
+data['距离买点'] = np.round(data[['三年估值范围买点比例', '五年估值范围买点比例', '七年估值范围买点比例']].mean(axis=1), 2)
+data['距离卖点'] = np.round(data[['三年估值范围卖点比例', '五年估值范围卖点比例', '七年估值范围卖点比例']].mean(axis=1), 2)
 data = data[
     [
         '证券代码',
@@ -94,8 +102,8 @@ data = data[
         '数据修正',
     ]
 ]
-data.sort_values("距离买点",inplace=True)
+data.sort_values("距离买点", inplace=True)
 data['距离买点'] = data['距离买点'].astype(str) + '%'
 data['距离卖点'] = data['距离卖点'].astype(str) + '%'
-data.reset_index(drop=True,inplace=True)
-data.to_csv('R15_%s_std.csv' %str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
+data.reset_index(drop=True, inplace=True)
+data.to_csv('R15_%s_std.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')

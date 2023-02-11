@@ -8,7 +8,7 @@ pro = ts.pro_api('a44e2a405b4b8abc8373f202480c3bfffdcaa4e7b3b5a35613d851cd')
 
 end_date = datetime.datetime.now()
 start_date = end_date - datetime.timedelta(weeks=(10 * 52))
-print('Get Data: ',int(start_date.strftime('%Y%m%d')),int(end_date.strftime('%Y%m%d')))
+print('Get Data: ', int(start_date.strftime('%Y%m%d')), int(end_date.strftime('%Y%m%d')))
 
 R15 = pd.read_csv('2022_R15.csv')
 for _, row in R15.iterrows():
