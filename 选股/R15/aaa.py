@@ -5,7 +5,7 @@ import numpy as np
 # 初始化pro接口
 pro = ts.pro_api('a44e2a405b4b8abc8373f202480c3bfffdcaa4e7b3b5a35613d851cd')
 
-# 拉取数据
+# 获取分红数据
 dividend_df = pro.dividend(ts_code="600519.SH", fields=[
                                             "ts_code",
                                             "end_date",
