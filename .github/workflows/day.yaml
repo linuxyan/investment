@@ -39,7 +39,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: poetry install --no-dev --no-root --no-ansi --no-interaction
 
       - name: Run code
         run: |
@@ -54,7 +54,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git add .
           git commit -m "action:`date`"
-          
+
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
