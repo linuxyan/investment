@@ -21,11 +21,11 @@ for _, row in R15.iterrows():
     roe_mean = round(finance_data['roe'].mean(), 2)
 
     std_multiple = std_multiple_init
-    if liab_ratio > 45:        # # 近五年负债率大于45 标准差增加0.25
-        std_multiple += 0.25  
-    if dividend_ratio < 30:     # 近五年分红率小于30 标准差增加0.25
+    if liab_ratio > 45:  # # 近五年负债率大于45 标准差增加0.25
         std_multiple += 0.25
-    if roe_mean < 25:          # 近五年roe小于30 标准差增加0.25
+    if dividend_ratio < 30:  # 近五年分红率小于30 标准差增加0.25
+        std_multiple += 0.25
+    if roe_mean < 25:  # 近五年roe小于30 标准差增加0.25
         std_multiple += 0.25
 
     code_data = code_data[code_data['trade_date'] <= int(end_date.strftime('%Y%m%d'))]
@@ -69,7 +69,7 @@ for _, row in R15.iterrows():
         mettm_limits = str(round(pe_limit_low, 2)) + '~' + str(round(pe_limit_up, 2))
         code_data_std += [pe_buy_ratio, pe_sell_ratio, pettm_mean, pettm_std, mettm_limits]
 
-    code_data_std += [fix_data, std_multiple, cash_div, dividend_ratio, liab_ratio,roe_mean]
+    code_data_std += [fix_data, std_multiple, cash_div, dividend_ratio, liab_ratio, roe_mean]
     data.append(code_data_std)
 
 data = pd.DataFrame(
