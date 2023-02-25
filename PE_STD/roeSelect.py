@@ -13,10 +13,10 @@ end_date = str(end_year) + '1231'
 start_date = str(end_year - 9) + '1231'  # 获取年报开始日期 (最近10年)
 list_date = str(end_year - 4) + '1231'  # 获取上市日期（大于5年）
 
-print(start_date,end_date,list_date)
+print(start_date, end_date, list_date)
 
 R15 = pd.read_csv('R15.csv')
-R15_list = R15['证券代码'].values.tolist() # 长期跟踪R15
+R15_list = R15['证券代码'].values.tolist()  # 长期跟踪R15
 
 # 拉取数据
 while True:
@@ -51,9 +51,9 @@ for index, row in all_stocks.iterrows():
     fina_data = fina_data[fina_data['end_date'] >= str(row['list_date'])]  # 排除上市前的ROE数据
     fina_data["end_date"] = pd.to_datetime(fina_data["end_date"])
     fina_data = fina_data.resample(on="end_date", rule="Y").last()
-    
+
     if (fina_data['roe'].min() >= 15 and fina_data['roe'].mean() >= 20) or (row['ts_code'] in R15_list):
-        is_R15 = None   # 是否长期跟踪的R15
+        is_R15 = None  # 是否长期跟踪的R15
         if row['ts_code'] in R15_list:
             is_R15 = '长期'
         R15_pd.append(
@@ -70,5 +70,5 @@ for index, row in all_stocks.iterrows():
 
     time.sleep(0.2)
 
-R15_pd = pd.DataFrame(R15_pd, columns=['证券代码', '证券简称', '跟踪时间','平均ROE', '最小ROE', '最大负债率', '最小毛利率'])
+R15_pd = pd.DataFrame(R15_pd, columns=['证券代码', '证券简称', '跟踪时间', '平均ROE', '最小ROE', '最大负债率', '最小毛利率'])
 R15_pd.to_csv('2022_R15.csv', index=False, encoding='utf_8_sig')
