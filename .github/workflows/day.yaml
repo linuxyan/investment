@@ -1,0 +1,62 @@
+name: day-cron-job
+
+on:
+  schedule:
+    - cron: '0 20 * * 1-5'
+
+jobs:
+  dayjob:
+    if: github.event.pull_request.draft == false
+    name: day-cron-job
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version-file: '.python-version'
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-v0
+
+      - name: Load cached .local
+        uses: actions/cache@v3
+        with:
+          path: ~/.local
+          key: dotlocal-${{ runner.os }}-${{ hashFiles('.github/workflows/day.yml') }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.1.13
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Run code
+        run: |
+          source .venv/bin/activate
+          cd PE_STD
+          python getPeData.py
+          python countPeStd.py
+
+      - name: Commit
+        run: |
+          git config --global user.email 4221273+linuxyan@users.noreply.github.com
+          git config --global user.name CaoYan
+          git add .
+          git commit -m"action:`date`"
+          git pull --rebase
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
