@@ -7,13 +7,23 @@ increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)
 std_multiple_init = 1.25  # 标准差倍数
 year_list = [3, 5]  # 采样年数
 end_date = datetime.datetime.now()
-# end_date = datetime.datetime.strptime('20221028','%Y%m%d')
+# end_date = datetime.datetime.strptime('20200519','%Y%m%d')
 
 
 data = []
 for _, row in R15.iterrows():
     code_data = pd.read_csv('data/%s_pe.csv' % row['证券代码'])
-    finance_data = pd.read_csv('data/%s_finance.csv' % row['证券代码']).head(5)
+    code_data = code_data[code_data['trade_date'] <= int(end_date.strftime('%Y%m%d'))]
+    code_data_last = code_data[code_data['trade_date'] == code_data['trade_date'].max()]
+
+    finance_data = pd.read_csv('data/%s_finance.csv' % row['证券代码'])
+
+    if int(end_date.strftime('%m%d')) >= 501:   # 年报出了之后，用最新一年的年报
+        finance_data = finance_data[finance_data['year'] < int(end_date.strftime('%Y'))]    # 出年报了用最新的年报数据
+    else:
+        finance_data = finance_data[finance_data['year'] < int(end_date.strftime('%Y')) - 1] # 未出年报，用前一年的年报数据
+
+    finance_data = finance_data.head(5)
 
     liab_ratio = round(finance_data['负债率'].mean(), 2)  # 负债率
     dividend_ratio = round(finance_data['分红率'].mean(), 2)  # 分红率 利润是否为真
@@ -25,11 +35,11 @@ for _, row in R15.iterrows():
         std_multiple += 0.25
     if dividend_ratio < 30:  # 近五年分红率小于30 标准差增加0.25
         std_multiple += 0.25
-    if roe_mean < 25:  # 近五年roe小于30 标准差增加0.25
+    if roe_mean < 24:  # 近五年roe小于24() 标准差增加0.25
         std_multiple += 0.25
 
-    code_data = code_data[code_data['trade_date'] <= int(end_date.strftime('%Y%m%d'))]
-    code_data_last = code_data[code_data['trade_date'] == code_data['trade_date'].max()]
+
+    
     pe_ttm_last = code_data_last['pe_ttm'].iloc[0]
     close_last = code_data_last['close'].iloc[0]
     dv_ttm = code_data_last['dv_ttm'].iloc[0]
