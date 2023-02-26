@@ -8,7 +8,15 @@ import tushare as ts
 # 初始化pro接口
 pro = ts.pro_api('a44e2a405b4b8abc8373f202480c3bfffdcaa4e7b3b5a35613d851cd')
 
-end_year = 2021  # 获取结束年报年份
+end_year = int(datetime.datetime.now().strftime('%Y'))  # 获取结束年报年份
+
+if int(datetime.datetime.now().strftime('%m%d')) >= 501:
+    R15FileName = end_year
+    end_year -= 1
+else:
+    R15FileName = end_year - 1
+    end_year -= 2
+
 end_date = str(end_year) + '1231'
 start_date = str(end_year - 9) + '1231'  # 获取年报开始日期 (最近10年)
 list_date = str(end_year - 4) + '1231'  # 获取上市日期（大于5年）
@@ -71,4 +79,4 @@ for index, row in all_stocks.iterrows():
     time.sleep(0.2)
 
 R15_pd = pd.DataFrame(R15_pd, columns=['证券代码', '证券简称', '跟踪时间', '平均ROE', '最小ROE', '最大负债率', '最小毛利率'])
-R15_pd.to_csv('2022_R15.csv', index=False, encoding='utf_8_sig')
+R15_pd.to_csv('%s_R15.csv' % str(R15FileName), index=False, encoding='utf_8_sig')

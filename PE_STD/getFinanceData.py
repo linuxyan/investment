@@ -1,4 +1,5 @@
 # 导入tushare
+import datetime
 import time
 import pandas as pd
 import tushare as ts
@@ -7,7 +8,18 @@ import numpy as np
 # 初始化pro接口
 pro = ts.pro_api('a44e2a405b4b8abc8373f202480c3bfffdcaa4e7b3b5a35613d851cd')
 
-R15 = pd.read_csv('2022_R15.csv')
+end_date = datetime.datetime.now()
+end_year = int(end_date.strftime('%Y'))
+if int(end_date.strftime('%m%d')) >= 501:
+    R15FileName = end_year
+else:
+    R15FileName = end_year - 1
+
+R15File = '%s_R15.csv' % str(R15FileName)
+
+print('Get Finance Data: ', R15File)
+
+R15 = pd.read_csv(R15File)
 for _, row in R15.iterrows():
     print(row['证券代码'])
     while True:

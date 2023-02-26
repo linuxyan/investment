@@ -2,7 +2,7 @@ name: day-cron-job
 
 # on:
 #   schedule:
-#     - cron: '0 20 * * 1-5'
+#     - cron: '0 13 * * 1-5'  # Asia/Shanghai 21:00
 
 on: workflow_dispatch
 
@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Asia/Shanghai"
+
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
@@ -54,7 +58,7 @@ jobs:
         run: |
           git config --global user.email "4221273+linuxyan@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git commit -a  -m "action:`date`"
+          git commit -a  -m "action:`date +'%Y-%m-%dT%H:%M:%S'`"
 
       - name: Push changes
         uses: ad-m/github-push-action@master

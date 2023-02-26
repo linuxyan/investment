@@ -2,26 +2,35 @@ import pandas as pd
 import numpy as np
 import datetime
 
-R15 = pd.read_csv('2022_R15.csv')
+end_date = datetime.datetime.now()
+end_year = int(end_date.strftime('%Y'))
+if int(end_date.strftime('%m%d')) >= 501:
+    R15FileName = end_year
+else:
+    R15FileName = end_year - 1
+
+R15File = '%s_R15.csv' % str(R15FileName)
+
+R15 = pd.read_csv(R15File)
 increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)
 std_multiple_init = 1.25  # 标准差倍数
 year_list = [3, 5]  # 采样年数
 end_date = datetime.datetime.now()
 # end_date = datetime.datetime.strptime('20200519','%Y%m%d')
 
+hold_stocks = pd.read_csv('hold_stock.csv')
 
 data = []
 for _, row in R15.iterrows():
     code_data = pd.read_csv('data/%s_pe.csv' % row['证券代码'])
     code_data = code_data[code_data['trade_date'] <= int(end_date.strftime('%Y%m%d'))]
     code_data_last = code_data[code_data['trade_date'] == code_data['trade_date'].max()]
-
     finance_data = pd.read_csv('data/%s_finance.csv' % row['证券代码'])
 
-    if int(end_date.strftime('%m%d')) >= 501:   # 年报出了之后，用最新一年的年报
-        finance_data = finance_data[finance_data['year'] < int(end_date.strftime('%Y'))]    # 出年报了用最新的年报数据
+    if int(end_date.strftime('%m%d')) >= 501:  # 年报出了之后，用最新一年的年报
+        finance_data = finance_data[finance_data['year'] < int(end_date.strftime('%Y'))]  # 出年报了用最新的年报数据
     else:
-        finance_data = finance_data[finance_data['year'] < int(end_date.strftime('%Y')) - 1] # 未出年报，用前一年的年报数据
+        finance_data = finance_data[finance_data['year'] < int(end_date.strftime('%Y')) - 1]  # 未出年报，用前一年的年报数据
 
     finance_data = finance_data.head(5)
 
@@ -38,8 +47,6 @@ for _, row in R15.iterrows():
     if roe_mean < 24:  # 近五年roe小于24() 标准差增加0.25
         std_multiple += 0.25
 
-
-    
     pe_ttm_last = code_data_last['pe_ttm'].iloc[0]
     close_last = code_data_last['close'].iloc[0]
     dv_ttm = code_data_last['dv_ttm'].iloc[0]
@@ -137,7 +144,19 @@ data = data[
     ]
 ]
 data.sort_values("距离买点%", inplace=True)
-data['距离买点%'] = data['距离买点%'].astype(str) + '%'
-data['距离卖点%'] = data['距离卖点%'].astype(str) + '%'
-data.reset_index(drop=True, inplace=True)
-data.to_csv('R15_%s_std.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
+data = pd.merge(data, hold_stocks, how='left')
+
+export_data = data.copy()
+export_data['距离买点%'] = export_data['距离买点%'].astype(str) + '%'
+export_data['距离卖点%'] = export_data['距离卖点%'].astype(str) + '%'
+export_data.reset_index(drop=True, inplace=True)
+export_data.to_csv('pe_std/R15_%s_std.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
+
+hold_data = data.copy()
+hold_data = hold_data[(hold_data['距离买点%'] <= 10) | (hold_data['买入价格'] > 0)]
+hold_data.reset_index(drop=True, inplace=True)
+hold_data['盈亏%'] = np.round((hold_data['收盘价'] / hold_data['买入价格'] - 1) * 100, 2)
+hold_data = hold_data[['证券代码', '证券简称', '日期', '收盘价', '股息率', 'PE_TTM', '距离买点%', '距离卖点%', '买入日期', '买入价格', '买入PE', '盈亏%']]
+hold_data['距离买点%'] = hold_data['距离买点%'].astype(str) + '%'
+hold_data['距离卖点%'] = hold_data['距离卖点%'].astype(str) + '%'
+hold_data.to_csv('pe_std/R15_%s_std_hold.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
