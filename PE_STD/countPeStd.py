@@ -13,7 +13,7 @@ R15File = '%s_R15.csv' % str(R15FileName)
 
 R15 = pd.read_csv(R15File)
 increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)
-std_multiple_init = 1.25  # 标准差倍数
+std_multiple_init = 1.5  # 标准差倍数
 year_list = [3, 5]  # 采样年数
 end_date = datetime.datetime.now()
 # end_date = datetime.datetime.strptime('20200519','%Y%m%d')
@@ -156,7 +156,7 @@ hold_data = data.copy()
 hold_data = hold_data[(hold_data['距离买点%'] <= 10) | (hold_data['买入价格'] > 0)]
 hold_data.reset_index(drop=True, inplace=True)
 hold_data['盈亏%'] = np.round((hold_data['收盘价'] / hold_data['买入价格'] - 1) * 100, 2)
-hold_data = hold_data[['证券代码', '证券简称', '日期', '收盘价', '股息率', 'PE_TTM', '距离买点%', '距离卖点%', '买入日期', '买入价格', '买入PE', '盈亏%']]
+hold_data = hold_data[['证券代码', '证券简称', '日期', '收盘价', '股息率', 'PE_TTM', '距离买点%', '距离卖点%', '标准差倍数','买入日期', '买入价格', '买入PE', '盈亏%']]
 hold_data['距离买点%'] = hold_data['距离买点%'].astype(str) + '%'
 hold_data['距离卖点%'] = hold_data['距离卖点%'].astype(str) + '%'
 hold_data.to_csv('pe_std/R15_%s_std_hold.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
