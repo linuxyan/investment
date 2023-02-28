@@ -15,8 +15,8 @@ R15 = pd.read_csv(R15File)
 increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)
 std_multiple_init = 1.5  # 标准差倍数
 year_list = [3, 5]  # 采样年数
-# end_date = datetime.datetime.now()
-end_date = datetime.datetime.strptime('20221028','%Y%m%d')
+end_date = datetime.datetime.now()
+# end_date = datetime.datetime.strptime('20221028','%Y%m%d')
 
 hold_stocks = pd.read_csv('hold_stock.csv')
 
