@@ -24,8 +24,8 @@ for _, row in R15.iterrows():
     print(row['证券代码'])
 
     while True:
-    # 基础数据
-        base_df = pro.stock_basic(ts_code=row['证券代码'],fields=["ts_code","industry","list_date"])
+        # 基础数据
+        base_df = pro.stock_basic(ts_code=row['证券代码'], fields=["ts_code", "industry", "list_date"])
         if not base_df.empty:
             break
     base_df['list_date'] = np.int32(base_df.list_date.str[0:4])
@@ -110,7 +110,7 @@ for _, row in R15.iterrows():
     roe_data.drop_duplicates(subset=['ts_code', 'end_date', 'roe'], keep='first', inplace=True)
     roe_data = roe_data[['ts_code', 'year', 'roe']]
 
-    df = pd.merge(base_df,roe_data)
+    df = pd.merge(base_df, roe_data)
     df = pd.merge(df, income_df)
     df = pd.merge(df, dividend_df)
     df = pd.merge(df, balance_df)
@@ -121,7 +121,7 @@ for _, row in R15.iterrows():
     df['compr_inc_attr_p'] = np.round(df['compr_inc_attr_p'] / 100000000, 4)
     df.rename(
         columns={
-            'list_date':'上市年份',
+            'list_date': '上市年份',
             'industry': '行业',
             'total_revenue': '营业总收入(亿)',
             'compr_inc_attr_p': '净利润(亿)',

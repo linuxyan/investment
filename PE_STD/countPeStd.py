@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import datetime
 
+import requests
+
 end_date = datetime.datetime.now()
 end_year = int(end_date.strftime('%Y'))
 if int(end_date.strftime('%m%d')) >= 501:
@@ -47,7 +49,7 @@ for _, row in R15.iterrows():
         std_multiple += 0.25
     if roe_mean < 24:  # 近五年roe小于24() 标准差增加0.25
         std_multiple += 0.25
-    if int(end_date.strftime('%Y')) - list_year < 9:   # 上市小于10年，标准差增加0.25
+    if int(end_date.strftime('%Y')) - list_year < 9:  # 上市小于10年，标准差增加0.25
         std_multiple += 0.25
 
     pe_ttm_last = code_data_last['pe_ttm'].iloc[0]
@@ -162,7 +164,21 @@ hold_data = data.copy()
 hold_data = hold_data[(hold_data['距离买点%'] <= 10) | (hold_data['买入价格'] > 0)]
 hold_data.reset_index(drop=True, inplace=True)
 hold_data['盈亏%'] = np.round((hold_data['收盘价'] / hold_data['买入价格'] - 1) * 100, 2)
-hold_data = hold_data[['证券代码', '证券简称', '上市年份','日期', '收盘价', '股息率', 'PE_TTM', '距离买点%', '距离卖点%', '标准差倍数','买入日期', '买入价格', '买入PE', '盈亏%']]
+hold_data = hold_data[
+    ['证券代码', '证券简称', '上市年份', '日期', '收盘价', '股息率', 'PE_TTM', '距离买点%', '距离卖点%', '标准差倍数', '买入日期', '买入价格', '买入PE', '盈亏%']
+]
 hold_data['距离买点%'] = hold_data['距离买点%'].astype(str) + '%'
 hold_data['距离卖点%'] = hold_data['距离卖点%'].astype(str) + '%'
 hold_data.to_csv('pe_std/R15_%s_std_hold.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
+
+send_message = hold_data[['证券简称', '收盘价', '距离买点%']].to_string(index=False)
+
+requests.get(
+    'https://api2.pushdeer.com/message/push',
+    params={
+        "pushkey": "PDU20601T71tamatA5MEOLRHMfVXNtgfseklYRwKh",
+        "text": str(end_date.strftime('%Y%m%d')),
+        "type": 'text',
+        "desp": send_message,
+    },
+).json()
