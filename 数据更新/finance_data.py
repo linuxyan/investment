@@ -1,8 +1,10 @@
-import tushare as ts
-import requests
+import os
+import time
+
 import constant
-import os, time
 import pandas as pd
+import requests
+import tushare as ts
 
 
 class FinanceData:

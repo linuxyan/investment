@@ -1,6 +1,7 @@
-import pandas as pd
-import numpy as np
 import datetime
+
+import numpy as np
+import pandas as pd
 
 R15 = pd.read_csv('2022_R15.csv')
 increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)

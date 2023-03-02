@@ -1,9 +1,10 @@
 # 导入tushare
 import datetime
 import time
+
+import numpy as np
 import pandas as pd
 import tushare as ts
-import numpy as np
 
 # 初始化pro接口
 pro = ts.pro_api('a44e2a405b4b8abc8373f202480c3bfffdcaa4e7b3b5a35613d851cd')
