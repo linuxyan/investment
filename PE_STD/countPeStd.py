@@ -18,7 +18,7 @@ increase_ratio = 0.12  # 每年业绩增长比例(业绩增长+分红率)
 std_multiple_init = 1.5  # 标准差倍数
 year_list = [3, 5]  # 采样年数
 end_date = datetime.datetime.now()
-# end_date = datetime.datetime.strptime('20221028','%Y%m%d')
+# end_date = datetime.datetime.strptime('20221221','%Y%m%d')
 
 hold_stocks = pd.read_csv('hold_stock.csv')
 
@@ -171,7 +171,7 @@ hold_data['距离买点%'] = hold_data['距离买点%'].astype(str) + '%'
 hold_data['距离卖点%'] = hold_data['距离卖点%'].astype(str) + '%'
 hold_data.to_csv('pe_std/R15_%s_std_hold.csv' % str(end_date.strftime('%Y%m%d')), encoding='utf_8_sig')
 
-send_message = hold_data[['证券简称', '收盘价', '距离买点%']].to_string(index=False)
+send_message = hold_data[['证券简称', '收盘价', '距离买点%', '距离卖点%']].to_string(index=False)
 
 requests.get(
     'https://api2.pushdeer.com/message/push',
