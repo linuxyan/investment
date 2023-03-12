@@ -4,9 +4,9 @@ from finance_data import FinanceData
 
 data = FinanceData()
 # data.save_stock_basic()
-# data.save_fina_indicator()
-# data.count_R15(2022)
-# data.save_daily_basic(data.query_R15())   # 更新日pe数据
+# data.save_fina_indicator()                # 保存所有股票的roe 数据
+# data.count_R15(2022)                      # 根据roe更新R15列表
+# data.save_daily_basic(data.query_R15())   # 更新R15列表的日pe数据
 
 
 curr_date = int(datetime.now().strftime('%m%d'))
