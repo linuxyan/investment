@@ -1,12 +1,16 @@
+import math
 import os
+import sqlite3
 from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
 
+import numpy as np
 import pandas as pd
 from config import db_file
 from sqlalchemy import Column, Float, Integer, String, create_engine, func
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 Base = declarative_base()
 
@@ -44,17 +48,72 @@ class R15(Base):
     __tablename__ = 'r15'
     id = Column(Integer, primary_key=True)
     ts_code = Column(String(50), nullable=False, doc="TS代码")
+    name = Column(String(50), nullable=False, doc="股票名称")
+    year = Column(String(50), nullable=True, doc="R15年份")
     start_date = Column(String(50), nullable=True, doc="R15开始时间")
     end_date = Column(String(50), nullable=True, doc="R15结束时间")
     roe_mean = Column(String(50), nullable=True, doc="10年算数平均ROE")
     roe_min = Column(String(50), nullable=True, doc="10年最低ROE")
+    debt_to_assets = Column(String(50), nullable=True, doc="资产负债率%")
+
+    def to_json(self):
+        dict_ = self.__dict__
+        if "_sa_instance_state" in dict_:
+            del dict_["_sa_instance_state"]
+        return dict_
+
+
+class DailyBasic(Base):
+    __tablename__ = 'daily_basic'
+    id = Column(Integer, primary_key=True)
+    ts_code = Column(String(50), nullable=False, doc="TS代码")
+    trade_date = Column(String(50), nullable=True, doc="交易日期")
+    close = Column(String(50), nullable=True, doc="当日收盘价")
+    pe_ttm = Column(Float(), nullable=True, doc="市盈率(TTM)")
+    ps_ttm = Column(Float(), nullable=True, doc="市销率(TTM)")
+    dv_ttm = Column(Float(), nullable=True, doc="股息率(TTM)%")
+    total_share = Column(Float(), nullable=True, doc="总股本")
+    total_mv = Column(Float(), nullable=True, doc="总市值")
+
+    def to_json(self):
+        dict_ = self.__dict__
+        if "_sa_instance_state" in dict_:
+            del dict_["_sa_instance_state"]
+        return dict_
+
+
+# 标准差计算
+class StdevFunc:
+    def __init__(self):
+        self.M = 0.0
+        self.S = 0.0
+        self.k = 1
+
+    def step(self, value):
+        if value is None:
+            return
+        tM = self.M
+        self.M += (value - tM) / self.k
+        self.S += (value - tM) * (value - self.M)
+        self.k += 1
+
+    def finalize(self):
+        if self.k < 3:
+            return None
+        return math.sqrt(self.S / (self.k - 2))
 
 
 class DBManager:
     def __init__(self):
-        self.engine = create_engine('sqlite:///' + db_file)
-        if not os.path.exists(db_file):
-            Base.metadata.create_all(self.engine)
+        self.engine = create_engine('sqlite://', poolclass=StaticPool, creator=self.__sqlite_engine_creator)
+        # if not os.path.exists(db_file):
+        #     Base.metadata.create_all(self.engine)
+        Base.metadata.create_all(self.engine)
+
+    def __sqlite_engine_creator(self):
+        con = sqlite3.connect(db_file)
+        con.create_aggregate("stdev", 1, StdevFunc)
+        return con
 
     @contextmanager
     def db_session(self):
@@ -111,34 +170,98 @@ class DBManager:
         else:
             return None
 
-    # @class_dbsession
-    # def add_user(self, session, name, age):
-    #     user = User(name=name, age=age)
-    #     session.add(user)
+    @class_dbsession
+    def get_fina_indicator_debt_to_assets(self, session, ts_code_list, end_date):
+        fina_indicator_debt_to_assets = (
+            session.query(FinaIndicator)
+            .filter(FinaIndicator.ts_code.in_(ts_code_list))
+            .filter(FinaIndicator.end_date == end_date)
+            .all()
+        )
+        if fina_indicator_debt_to_assets:
+            fina_indicator_debt_to_assets = list(map(lambda x: x.to_json(), fina_indicator_debt_to_assets))
+            fina_indicator_debt_to_assets = pd.DataFrame(
+                fina_indicator_debt_to_assets,
+                columns=[
+                    'ts_code',
+                    'ann_date',
+                    'end_date',
+                    'roe_waa',
+                    'netprofit_yoy',
+                    'debt_to_assets',
+                    'netprofit_margin',
+                    'grossprofit_margin',
+                ],
+            )
+            return fina_indicator_debt_to_assets[['ts_code', 'debt_to_assets']]
+        else:
+            return None
 
-    # @class_dbsession
-    # def delete_user(self, session, user_id):
-    #     user = session.query(User).filter_by(id=user_id).first()
-    #     if user:
-    #         session.delete(user)
+    @class_dbsession
+    def get_daily_basic_last(self, session, ts_code):
+        daily_basic_last = (
+            session.query(DailyBasic).filter_by(ts_code=ts_code).order_by(DailyBasic.trade_date.desc()).first()
+        )
 
-    # @class_dbsession
-    # def update_user(self, session, user_id, name, age):
-    #     user = session.query(User).filter_by(id=user_id).first()
-    #     if user:
-    #         user.name = name
-    #         user.age = age
+        if daily_basic_last:
+            return daily_basic_last.to_json()
+        else:
+            return None
 
-    # @class_dbsession
-    # def get_user(self, session, user_id):
-    #     user = session.query(User).filter_by(id=user_id).first()
-    #     if user:
-    #         return pd.DataFrame.from_records([{'id': user.id, 'name': user.name, 'age': user.age}])
-    #     else:
-    #         return pd.DataFrame()
+    @class_dbsession
+    def count_r15(self, session, year):
+        max_end_date = int(str(year) + '0101')
+        min_end_date = int(str(int(year) - 7) + '1231')
+        r15 = (
+            session.query(
+                FinaIndicator.ts_code,
+                StockBasic.name,
+                func.avg(FinaIndicator.roe_waa),
+                func.min(FinaIndicator.roe_waa),
+                func.count(FinaIndicator.roe_waa),
+                func.stdev(FinaIndicator.netprofit_yoy),
+            )
+            .filter(
+                FinaIndicator.ts_code == StockBasic.ts_code,
+                FinaIndicator.end_date < max_end_date,
+                FinaIndicator.end_date >= min_end_date,
+            )
+            .group_by(FinaIndicator.ts_code)
+            .having(
+                func.count(FinaIndicator.roe_waa) == 7,
+                func.avg(FinaIndicator.roe_waa) >= 20,
+                func.min(FinaIndicator.roe_waa) >= 15,
+                func.stdev(FinaIndicator.netprofit_yoy) <= 60,
+            )
+            .all()
+        )
+        if r15:
+            r15_pd = pd.DataFrame(r15, columns=['ts_code', 'name', 'roe_mean', 'roe_min', 'year', 'net_std'])
+            r15_pd['roe_mean'] = np.round(r15_pd['roe_mean'], 2)
+            return r15_pd
+        else:
+            None
+        # select ts_code,avg(roe_waa) as roe_mean,min(roe_waa) as roe_min, count(roe_waa) as roe_count, stdev(netprofit_yoy) as netprofit_yoy_std from fina_indicator where end_date < 20190101 and end_date >= 20121231 GROUP BY ts_code HAVING roe_mean >= 20 and roe_min >= 15 and roe_count == 7 and netprofit_yoy_std <= 60;
 
-    # @class_dbsession
-    # def get_all_users(self, session):
-    #     users = session.query(User).all()
-    #     df = pd.DataFrame.from_records([{'id': user.id, 'name': user.name, 'age': user.age} for user in users])
-    #     return df
+    @class_dbsession
+    def query_r15(self, session, year=None):
+        if year:
+            start_date = int(str(year) + '0501')
+            end_date = int(str(year + 1) + '0430')
+            r15 = session.query(R15).filter(R15.start_date >= start_date, R15.end_date <= end_date).all()
+        else:
+            r15 = session.query(R15).all()
+
+        if r15:
+            r15_list = list(map(lambda x: x.to_json(), r15))
+            return pd.DataFrame(
+                r15_list, columns=['ts_code', 'name', 'start_date', 'end_date', 'roe_mean', 'roe_min', 'debt_to_assets']
+            )
+        else:
+            None
+
+    @class_dbsession
+    def drop_r15(self, session, year):
+        start_date = int(str(year) + '0501')
+        end_date = int(str(year + 1) + '0430')
+        session.query(R15).filter(R15.start_date >= start_date, R15.end_date <= end_date).delete()
