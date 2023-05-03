@@ -162,3 +162,4 @@ class FinanceData:
                 daily_basic_df.to_sql('daily_basic', con=self.db.engine, index=False, if_exists='replace')
             else:
                 daily_basic_df.to_sql('daily_basic', con=self.db.engine, index=False, if_exists='append')
+

@@ -82,6 +82,26 @@ class DailyBasic(Base):
         return dict_
 
 
+class PeStdHistory(Base):
+    __tablename__ = 'pe_std_history'
+    id = Column(Integer, primary_key=True)
+    trade_date = Column(String(50), nullable=True, doc="交易日期")
+    ts_code = Column(String(50), nullable=False, doc="TS代码")
+    name = Column(String(50), nullable=False, doc="股票名称")
+    close = Column(String(50), nullable=True, doc="当日收盘价")
+    pe_ttm = Column(Float(), nullable=True, doc="市盈率(TTM)")
+    pe_buy_ratio = Column(Float(), nullable=True, doc="买点%")
+    pe_sell_ratio = Column(Float(), nullable=True, doc="卖点(100%-150%)%")
+    pettm_limits = Column(String(50), nullable=True, doc="pe范围")
+    debt_to_assets = Column(Float(), nullable=True, doc="负债")
+
+    def to_json(self):
+        dict_ = self.__dict__
+        if "_sa_instance_state" in dict_:
+            del dict_["_sa_instance_state"]
+        return dict_
+
+
 # 标准差计算
 class StdevFunc:
     def __init__(self):
@@ -198,10 +218,37 @@ class DBManager:
             return None
 
     @class_dbsession
-    def get_daily_basic_last(self, session, ts_code):
-        daily_basic_last = (
-            session.query(DailyBasic).filter_by(ts_code=ts_code).order_by(DailyBasic.trade_date.desc()).first()
+    def get_daily_basic_ts_code(self, session, ts_code, start_date, end_date):
+        daily_basic_ts_code = (
+            session.query(DailyBasic)
+            .filter(
+                DailyBasic.ts_code == ts_code, DailyBasic.trade_date >= start_date, DailyBasic.trade_date <= end_date
+            )
+            .all()
         )
+
+        if daily_basic_ts_code:
+            daily_basic_ts_code_list = list(map(lambda x: x.to_json(), daily_basic_ts_code))
+            return pd.DataFrame(
+                daily_basic_ts_code_list,
+                columns=['ts_code', 'trade_date', 'close', 'pe_ttm', 'ps_ttm', 'dv_ttm', 'total_share', 'total_mv'],
+            )
+        else:
+            None
+
+    @class_dbsession
+    def get_daily_basic_last(self, session, ts_code, trade_date=None):
+        if trade_date:
+            daily_basic_last = (
+                session.query(DailyBasic)
+                .filter(DailyBasic.ts_code == ts_code, DailyBasic.trade_date <= trade_date)
+                .order_by(DailyBasic.trade_date.desc())
+                .first()
+            )
+        else:
+            daily_basic_last = (
+                session.query(DailyBasic).filter_by(ts_code=ts_code).order_by(DailyBasic.trade_date.desc()).first()
+            )
 
         if daily_basic_last:
             return daily_basic_last.to_json()
@@ -210,8 +257,9 @@ class DBManager:
 
     @class_dbsession
     def count_r15(self, session, year):
+        count_year = 8
         max_end_date = int(str(year) + '0101')
-        min_end_date = int(str(int(year) - 7) + '1231')
+        min_end_date = int(str(int(year) - count_year) + '1231')
         r15 = (
             session.query(
                 FinaIndicator.ts_code,
@@ -228,7 +276,7 @@ class DBManager:
             )
             .group_by(FinaIndicator.ts_code)
             .having(
-                func.count(FinaIndicator.roe_waa) == 7,
+                func.count(FinaIndicator.roe_waa) == count_year,
                 func.avg(FinaIndicator.roe_waa) >= 20,
                 func.min(FinaIndicator.roe_waa) >= 15,
                 func.stdev(FinaIndicator.netprofit_yoy) <= 60,
@@ -265,3 +313,7 @@ class DBManager:
         start_date = int(str(year) + '0501')
         end_date = int(str(year + 1) + '0430')
         session.query(R15).filter(R15.start_date >= start_date, R15.end_date <= end_date).delete()
+
+    @class_dbsession
+    def drop_pe_std_history(self, session, trade_date):
+        session.query(PeStdHistory).filter(PeStdHistory.trade_date == trade_date).delete()
