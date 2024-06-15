@@ -1,0 +1,36 @@
+/* Reset default margin and padding */
+body, table {
+    margin: 0;
+    padding: 0;
+}
+
+/* Basic table styling */
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table header styling */
+.stock-table th {
+    background-color: #f2f2f2;
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+/* Table row styling */
+.stock-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+/* Light green background for rows where 最新价 <= 市盈率估值买点 or 最新价 <= 净利润估值买点*/
+.stock-table tbody tr.green-light {
+    background-color: #ccffcc; /* 浅绿色 */
+}
+
+/* Dark green background for rows where 最新价 <= 市盈率估值买点 and 最新价 <= 净利润估值买点 */
+.stock-table tbody tr.green-dark {
+    background-color: #008000; /* 深绿色 */
+}

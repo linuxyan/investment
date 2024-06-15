@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Table</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    temlpate_context
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.stock-table tbody tr');
+
+            rows.forEach(row => {
+                const price = parseFloat(row.querySelector('td:nth-child(5)').textContent);
+                const peBuyPoint = parseFloat(row.querySelector('td:nth-child(6)').textContent);
+                const profitBuyPoint = parseFloat(row.querySelector('td:nth-child(7)').textContent);
+
+                if ( price <= peBuyPoint ) {
+                    row.classList.add('green-light');
+                }
+
+                if ( price <= profitBuyPoint ) {
+                    row.classList.add('green-light');
+                }
+
+                if ( price <= peBuyPoint && price <= profitBuyPoint ) {
+                    row.classList.add('green-dark');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
