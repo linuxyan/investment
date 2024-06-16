@@ -4,4 +4,4 @@ on: workflow_dispatch
 
 jobs:
   call-workflow:
-    uses: .github/workflows/day.yml@main
+    uses: ./.github/workflows/day.yml@main
