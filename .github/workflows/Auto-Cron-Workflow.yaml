@@ -6,4 +6,4 @@ on:
 
 jobs:
   call-workflow:
-    uses: ./../../.github/workflows/day.yml
+    uses: ./.github/workflows/day.yaml
