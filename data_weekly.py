@@ -20,12 +20,12 @@ def weekly_data_update() -> pd.DataFrame:
     basic_stock_weekly = []
     for stock in basic_stock_list:
         print(f'Get weekly data : {stock[0:-1]}')
-        pe_ttm_avg, latest_date = get_stock_pettm_mean(symbol=stock[0])
+        pe_ttm_avg, pe_ttm_std, latest_date = get_stock_pettm_mean(symbol=stock[0])
         column_name, min_values = get_stock_net_profit(symbol=stock[0])
-        stock += [pe_ttm_avg, latest_date]
+        stock += [pe_ttm_avg, pe_ttm_std, latest_date]
         stock += min_values
         basic_stock_weekly.append(stock)
-    column_names += ['平均市盈率(5Y)(w)', 'date(w)']
+    column_names += ['平均市盈率(5Y)(w)', '市盈率标准差(5Y)(w)', 'date(w)']
     column_names += column_name
     stock_weekly_pd = pd.DataFrame(basic_stock_weekly, columns=column_names)
     stock_weekly_pd.to_pickle('data/weekly/last.pkl')
@@ -47,8 +47,9 @@ def get_stock_pettm_mean(symbol):
         # 提取最近五年的pe_ttm数据
         pe_ttm_data = indicator_data[indicator_data.index >= five_years_ago]['pe_ttm']
         pe_ttm_avg = pe_ttm_data.mean().round(2)
+        pe_ttm_std = pe_ttm_data.std().round(2)
         latest_date = indicator_data.index.max()
-        return pe_ttm_avg, latest_date
+        return pe_ttm_avg, pe_ttm_std, latest_date
     except Exception as e:
         print(f"Error occurred: {e}")
         raise Exception(f"Failed after 10 retries: {e}")
