@@ -50,9 +50,9 @@ jobs:
       - name: Run code
         run: |
           source .venv/bin/activate
-          cd PE_STD
-          python getPeData.py
-          python countPeStd.py
+          python data_weekly.py
+          python data_day.py
+          python export.py
 
       - name: Commit
         run: |
