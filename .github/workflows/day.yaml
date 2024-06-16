@@ -11,6 +11,9 @@ jobs:
     if: github.event.pull_request.draft == false
     name: day-cron-job
     runs-on: ubuntu-latest
+    env:
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
     steps:
       - uses: szenius/set-timezone@v1.0
