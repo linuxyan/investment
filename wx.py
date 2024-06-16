@@ -10,7 +10,7 @@ def get_access_token(appid, secret):
     return data
 
 
-if __name__ == 'main':
+if __name__ == "__main__":
     appid = os.environ.get("WX_APPID")
     secret = os.environ.get("WX_SECRET")
     print(get_access_token(appid=appid, secret=secret))
