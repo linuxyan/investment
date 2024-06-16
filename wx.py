@@ -5,6 +5,7 @@ import os
 def get_access_token(appid, secret):
     url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}'.format(appid, secret)
     response = requests.get(url)
+    print(response)
     data = response.json()
     return data
 
