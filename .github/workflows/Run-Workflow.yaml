@@ -1,0 +1,7 @@
+name: Run-Workflow
+
+on: workflow_dispatch
+
+jobs:
+  call-workflow:
+    uses: day.yml
