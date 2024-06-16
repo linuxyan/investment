@@ -57,6 +57,7 @@ jobs:
           python data_weekly.py
           python data_day.py
           python export.py
+          python wx.py
 
       - name: Commit
         run: |
