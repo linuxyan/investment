@@ -7,3 +7,4 @@ on:
 jobs:
   call-workflow:
     uses: ./.github/workflows/day.yaml
+    secrets: inherit
