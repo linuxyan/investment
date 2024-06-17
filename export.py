@@ -35,7 +35,8 @@ date_w = ' '.join(date_w.unique())
 date_d = ' '.join(date_d.unique())
 
 # 显示结果
-last_df = df[['日期', '股票名称', '市盈率估值', '净利润估值', '最新价', '市盈率估值买点', '净利润估值买点', '市盈率(TTM)', '合理市盈率']].copy()
+last_df = df[['日期', '股票名称', '市盈率估值', '净利润估值', '最新价', '市盈率估值买点', '净利润估值买点', '市盈率(TTM)', '合理市盈率','fix_预测净利润(亿)(w)']].copy()
+last_df = last_df.rename(columns={'fix_预测净利润(亿)(w)': '预测净利润(3Y)'})
 print(last_df)
 last_df.to_html('dataframe.html', index=False)
 
