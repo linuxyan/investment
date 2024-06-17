@@ -12,7 +12,7 @@ jobs:
       WX_SECRET: ${{ secrets.WX_SECRET }}
 
     steps:
-      - uses: szenius/set-timezone@v1.0
+      - uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Asia/Shanghai"
 
