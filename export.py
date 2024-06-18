@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import numpy as np
 import pandas as pd
+from save_img import save_img
 
 current_date_str = datetime.now().strftime('%Y-%m-%d')
 df = pd.read_pickle('data/day/last.pkl')
@@ -54,3 +55,5 @@ index_content = index_content.replace('temlpate_context', table_content).replace
 index_content = index_content.replace('date_w', date_w).replace('date_d', date_d)
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(index_content)
+
+save_img(last_df,current_date_str)
