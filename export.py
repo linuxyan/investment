@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from save_img import save_img
+from wx import push_context
 
 current_date_str = datetime.now().strftime('%Y-%m-%d')
 df = pd.read_pickle('data/day/last.pkl')
@@ -57,3 +58,4 @@ with open('index.html', 'w', encoding='utf-8') as f:
     f.write(index_content)
 
 save_img(last_df,current_date_str)
+push_context(current_date_str)

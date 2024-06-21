@@ -31,4 +31,4 @@ def push_context(date_str):
 
 
 if __name__ == "__main__":
-    push_context
+    pass
