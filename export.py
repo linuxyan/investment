@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from save_img import save_img
-from wx import push_context
+from wechat import push_context
 
 current_date_str = datetime.now().strftime('%Y-%m-%d')
 df = pd.read_pickle('data/day/last.pkl')
