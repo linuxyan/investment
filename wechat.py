@@ -32,9 +32,9 @@ def upload_thumb_to_wechat(access_token, imgpath):
 def upload_content_to_wechat(access_token, curr_date_str, html_context):
     content = {"articles": [
                 {
-                    "title":f"{curr_date_str}股票估值",
+                    "title":f"{curr_date_str}估值数据",
                     "author":"Robot",
-                    "digest":f"{curr_date_str}股票估值",
+                    "digest":f"{curr_date_str}估值数据",
                     "content":html_context,
                     "content_source_url":"https://linuxyan.github.io/investment",
                     "thumb_media_id":"hDIqbxBik3JzEsBmnzS0FUz7toCVFHil7wFJktrpg-zFiVy1RjnH5GAd6knNm7fB",
@@ -49,6 +49,13 @@ def upload_content_to_wechat(access_token, curr_date_str, html_context):
         raise ValueError(resp)
     return resp['media_id']
 
+def send_content_to_wechat(access_token, content_media_id):
+    data = {"media_id": content_media_id}
+    resp = requests.post('https://api.weixin.qq.com/cgi-bin/freepublish/submit',
+                         params=dict(access_token=access_token),
+                         data=json.dumps(data)).json()
+    return resp
+
 
 def push_content(date_str):
     appid = os.environ.get("WX_APPID")
@@ -60,7 +67,8 @@ def push_content(date_str):
     # thumb_media_id = upload_thumb_to_wechat(access_token=access_token,imgpath='docs/WX_thumb.png')
     # print(f"thumb_media_id:{thumb_media_id}")
     content_media_id = upload_content_to_wechat(access_token=access_token, curr_date_str=date_str,html_context=content)
-    print(content_media_id)
+    send_status = send_content_to_wechat(access_token=access_token,content_media_id=content_media_id)
+    print(send_status)
 
 if __name__ == "__main__":
     pass
