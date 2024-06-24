@@ -53,5 +53,6 @@ index_content = index_content.replace('temlpate_context', table_content).replace
 index_content = index_content.replace('date_w', date_w).replace('date_d', date_d)
 with open('index.html', 'w', encoding='utf-8') as f: f.write(index_content)
 
+name_list_str = ' | '.join(last_df['股票名称'].tolist())
 save_img(last_df,current_date_str)
-push_content(current_date_str)
+push_content(current_date_str, name_list_str)

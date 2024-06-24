@@ -29,12 +29,12 @@ def upload_thumb_to_wechat(access_token, imgpath):
     return resp['media_id']
 
 
-def upload_content_to_wechat(access_token, curr_date_str, html_context):
+def upload_content_to_wechat(access_token, curr_date_str, name_list_str, html_context):
     content = {"articles": [
                 {
                     "title":f"{curr_date_str}估值数据",
                     "author":"Robot",
-                    "digest":f"{curr_date_str}估值数据",
+                    "digest":f"{name_list_str}",
                     "content":html_context,
                     "content_source_url":"https://linuxyan.github.io/investment",
                     "thumb_media_id":"hDIqbxBik3JzEsBmnzS0FUz7toCVFHil7wFJktrpg-zFiVy1RjnH5GAd6knNm7fB",
@@ -57,18 +57,18 @@ def send_content_to_wechat(access_token, content_media_id):
     return resp
 
 
-def push_content(date_str):
+def push_content(date_str, name_list_str):
     appid = os.environ.get("WX_APPID")
     secret = os.environ.get("WX_SECRET")
     access_token = get_access_token(appid=appid, secret=secret)
     img_url = upload_image_to_wechat(access_token, f"static/{date_str}.png")
     with open('docs/wechat_template.html') as f: content = f.read()
-    content = content.replace('image_link',img_url).replace('image_date',date_str)
+    content = content.replace('image_link',img_url).replace('image_date',date_str).replace('name_list_str', name_list_str)
     # thumb_media_id = upload_thumb_to_wechat(access_token=access_token,imgpath='docs/WX_thumb.png')
     # print(f"thumb_media_id:{thumb_media_id}")
-    content_media_id = upload_content_to_wechat(access_token=access_token, curr_date_str=date_str,html_context=content)
-    send_status = send_content_to_wechat(access_token=access_token,content_media_id=content_media_id)
-    print(send_status)
+    content_media_id = upload_content_to_wechat(access_token=access_token, curr_date_str=date_str, name_list_str=name_list_str, html_context=content)
+    # send_status = send_content_to_wechat(access_token=access_token,content_media_id=content_media_id)
+    print(content_media_id)
 
 if __name__ == "__main__":
     pass
