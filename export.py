@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from save_img import save_img
-from wechat import push_context
+from wechat import push_content
 
 current_date_str = datetime.now().strftime('%Y-%m-%d')
 df = pd.read_pickle('data/day/last.pkl')
@@ -43,19 +43,15 @@ print(last_df)
 last_df.to_html('dataframe.html', index=False)
 
 
-with open('dataframe.html', 'r', encoding='utf-8') as f:
-    table_content = f.read()
-    table_content = table_content.replace('border="1" class="dataframe"', 'class="stock-table"')
+with open('dataframe.html', 'r', encoding='utf-8') as f: table_content = f.read()
+table_content = table_content.replace('border="1" class="dataframe"', 'class="stock-table"')
 
-
-with open('index_template.html', 'r', encoding='utf-8') as f:
-    index_content = f.read()
+with open('index_template.html', 'r', encoding='utf-8') as f: index_content = f.read()
 
 os.remove('dataframe.html')
 index_content = index_content.replace('temlpate_context', table_content).replace('Stock Table', current_date_str)
 index_content = index_content.replace('date_w', date_w).replace('date_d', date_d)
-with open('index.html', 'w', encoding='utf-8') as f:
-    f.write(index_content)
+with open('index.html', 'w', encoding='utf-8') as f: f.write(index_content)
 
 save_img(last_df,current_date_str)
-push_context(current_date_str)
+push_content(current_date_str)
