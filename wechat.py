@@ -44,7 +44,7 @@ def upload_content_to_wechat(access_token, curr_date_str, html_context):
             ]}
     resp = requests.post('https://api.weixin.qq.com/cgi-bin/draft/add',
                          params=dict(access_token=access_token),
-                         json=json.dumps(content)).json()
+                         data=json.dumps(content, ensure_ascii=False).encode('utf-8')).json()
     if 'errcode' in resp:
         raise ValueError(resp)
     return resp['media_id']
