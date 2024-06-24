@@ -2,7 +2,7 @@ name: Auto-Workflow
 
 on:
   schedule:
-    - cron: '0 5 * * 1,3,5'  # Asia/Shanghai 17:00
+    - cron: '0 10 * * 1,3,5'  # Asia/Shanghai 18:00
 
 jobs:
   call-workflow:
