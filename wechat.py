@@ -29,7 +29,7 @@ def upload_thumb_to_wechat(access_token, imgpath):
     return resp['media_id']
 
 
-def upload_content_to_wechat(access_token, thumb_media_id, curr_date_str, html_context):
+def upload_content_to_wechat(access_token, curr_date_str, html_context):
     content = {"articles": [
                 {
                     "title":f"{curr_date_str}股票估值",
@@ -37,7 +37,7 @@ def upload_content_to_wechat(access_token, thumb_media_id, curr_date_str, html_c
                     "digest":f"{curr_date_str}股票估值",
                     "content":html_context,
                     "content_source_url":"https://linuxyan.github.io/investment",
-                    "thumb_media_id":thumb_media_id,
+                    "thumb_media_id":"hDIqbxBik3JzEsBmnzS0FUz7toCVFHil7wFJktrpg-zFiVy1RjnH5GAd6knNm7fB",
                     "need_open_comment":1,
                     "only_fans_can_comment":0,
                 }
@@ -46,7 +46,7 @@ def upload_content_to_wechat(access_token, thumb_media_id, curr_date_str, html_c
                          params=dict(access_token=access_token),
                          json=json.dumps(content)).json()
     if 'errcode' in resp:
-        raise ValueError(resp['errmsg'])
+        raise ValueError(resp)
     return resp['media_id']
 
 
@@ -57,9 +57,9 @@ def push_content(date_str):
     img_url = upload_image_to_wechat(access_token, f"static/{date_str}.png")
     with open('docs/wechat_template.html') as f: content = f.read()
     content = content.replace('image_link',img_url).replace('image_date',date_str)
-    thumb_media_id = upload_thumb_to_wechat(access_token=access_token,imgpath='docs/WX_thumb.png')
-    print(f"thumb_media_id:{thumb_media_id}")
-    content_media_id = upload_content_to_wechat(access_token=access_token,thumb_media_id=thumb_media_id, curr_date_str=date_str,html_context=content)
+    # thumb_media_id = upload_thumb_to_wechat(access_token=access_token,imgpath='docs/WX_thumb.png')
+    # print(f"thumb_media_id:{thumb_media_id}")
+    content_media_id = upload_content_to_wechat(access_token=access_token, curr_date_str=date_str,html_context=content)
     print(content_media_id)
 
 if __name__ == "__main__":
