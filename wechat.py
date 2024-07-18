@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+from datetime import datetime
 
 def get_access_token(appid, secret):
     params = dict(grant_type='client_credential',
@@ -58,6 +59,9 @@ def send_content_to_wechat(access_token, content_media_id):
 
 
 def push_content(date_str, name_list_str):
+    today = datetime.now()
+    if today.weekday() != 4:    # 周五
+        print('Not Run.')
     appid = os.environ.get("WX_APPID")
     secret = os.environ.get("WX_SECRET")
     access_token = get_access_token(appid=appid, secret=secret)
