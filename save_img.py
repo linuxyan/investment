@@ -35,10 +35,10 @@ def save_img(df,date_str):
         else:
             # 仅当 'Values' 列的值小于 'Threshold' 列的值时设置背景色
             row = key[0] - 1  # 数据行索引
-            if df.loc[row, '最新价'] < df.loc[row, '市盈率估值买点'] or df.loc[row, '最新价'] < df.loc[row, '净利润估值买点']:
-                cell.set_facecolor(colors[0])
-            elif df.loc[row, '最新价'] < df.loc[row, '市盈率估值买点'] and df.loc[row, '最新价'] < df.loc[row, '净利润估值买点']:
+            if df.loc[row, '最新价'] < df.loc[row, '市盈率估值买点'] and df.loc[row, '最新价'] < df.loc[row, '净利润估值买点']:
                 cell.set_facecolor(colors[1])
+            elif df.loc[row, '最新价'] < df.loc[row, '市盈率估值买点'] or df.loc[row, '最新价'] < df.loc[row, '净利润估值买点']:
+                cell.set_facecolor(colors[0])
             else:
                 cell.set_facecolor(row_colors[row % len(row_colors)])
             cell.set_text_props(color=edge_color, fontproperties=font_prop)
