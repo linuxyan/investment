@@ -62,7 +62,8 @@ def get_stock_net_profit(symbol):
         indicator_data = ak.stock_profit_forecast_ths(symbol=symbol, indicator="预测年报净利润")
 
         max_year = indicator_data['年度'].max()
-        min_value_for_max_year = float(indicator_data.loc[indicator_data['年度'] == max_year, '最小值'].values[0])
+        min_value_for_max_year = ( float(indicator_data.loc[indicator_data['年度'] == max_year, '最小值'].values[0]) + \
+                                 float(indicator_data.loc[indicator_data['年度'] == max_year, '均值'].values[0]) ) / 2
         column_name = '预测净利润(亿)(w)'
 
         # 平均三年后的预测净利润，如果业绩增速年化大于25，则修正为8折
