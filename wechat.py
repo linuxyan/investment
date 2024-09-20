@@ -47,7 +47,7 @@ def upload_content_to_wechat(access_token, curr_date_str, name_list_str, html_co
                          params=dict(access_token=access_token),
                          data=json.dumps(content, ensure_ascii=False).encode('utf-8')).json()
     if 'errcode' in resp:
-        raise ValueError(resp)
+        return None
     return resp['media_id']
 
 def send_content_to_wechat(access_token, content_media_id):
