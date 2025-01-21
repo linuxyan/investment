@@ -34,7 +34,7 @@ def weekly_data_update() -> pd.DataFrame:
 
 
 @retry(delay=2, tries=5, logger=None)
-def get_stock_pettm_mean(symbol):
+def get_stock_pettm_mean(symbol, years = 5):
     try:
         # 获取股票指标数据
         indicator_data = ak.stock_a_indicator_lg(symbol=symbol)
@@ -42,7 +42,7 @@ def get_stock_pettm_mean(symbol):
         today = datetime.today().date()
 
         # 计算五年前的日期
-        five_years_ago = today - timedelta(days=5*365)
+        five_years_ago = today - timedelta(days=years*365)
 
         # 提取最近五年的pe_ttm数据
         pe_ttm_data = indicator_data[indicator_data.index >= five_years_ago]['pe_ttm']
