@@ -42,7 +42,7 @@ jobs:
           poetry update akshare
           python data_weekly.py
           python data_day.py
-          python export.py
+          python aaa.py
           # python wx.py
 
       - name: Commit
@@ -56,3 +56,8 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check job status
+        if: ${{ failure() }}
+        run: |
+          curl --location --request POST "https://api.day.app/TWLFNN3SKtPvTiUcXtdRbn/Github-Actions/任务执行失败,请检查."
