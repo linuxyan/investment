@@ -42,7 +42,7 @@ jobs:
           poetry update akshare
           python data_weekly.py
           python data_day.py
-          python aaa.py
+          python export.py
           # python wx.py
 
       - name: Commit
