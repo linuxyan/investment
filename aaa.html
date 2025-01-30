@@ -5,67 +5,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>股票数据展示</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
         }
+
         th, td {
-            padding: 8px;
+            padding: 12px 15px;
             text-align: left;
             border: 1px solid #ddd;
+            font-size: 14px;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fafafa;
+        }
+
+        td:hover {
+            background-color: #f1f1f1;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover td {
+            background-color: #e9f7e2;
+        }
+
+        /* 弹性布局容器 */
+        .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .loading-message {
+            text-align: center;
+            color: #555;
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .refresh-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+
+        .refresh-button:active {
+            background-color: #3e8e41;
         }
     </style>
 </head>
 <body>
     <h1>股票数据列表</h1>
-    <table id="stock-table">
-        <thead>
-            <tr>
-                <th>日期</th>
-                <th>股票名称</th>
-                <th>市盈率估值</th>
-                <th>净利润估值</th>
-                <th>最新价</th>
-                <th>市盈率估值买点</th>
-                <th>净利润估值买点</th>
-                <th>现价/买点%</th>
-                <th>市盈率(TTM)</th>
-                <th>合理市盈率</th>
-                <th>股息率(TTM)</th>
-                <th>预测净利润(亿)(w)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- 数据行将会通过 JavaScript 插入 -->
-        </tbody>
-    </table>
+
+    <!-- 表格容器 -->
+    <div class="table-container">
+        <table id="stock-table">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>股票名称</th>
+                    <th>市盈率估值</th>
+                    <th>净利润估值</th>
+                    <th>最新价</th>
+                    <th>市盈率估值买点</th>
+                    <th>净利润估值买点</th>
+                    <th>现价/买点%</th>
+                    <th>市盈率(TTM)</th>
+                    <th>合理市盈率</th>
+                    <th>股息率(TTM)</th>
+                    <th>预测净利润(亿)(w)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 数据行将会通过 JavaScript 插入 -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="button-container">
+        <button class="refresh-button" onclick="reloadData()">刷新数据</button>
+    </div>
 
     <script>
         // 加载 JSON 文件并动态生成表格内容
-        fetch('stock_data.json')  // 假设 stock_data.json 和该 HTML 文件位于同一目录
-            .then(response => response.json())  // 解析 JSON
-            .then(data => {
-                const tableBody = document.querySelector('#stock-table tbody');
-                
-                // 遍历 JSON 数据，生成表格行
-                data.forEach(stock => {
-                    const row = document.createElement('tr');
+        function loadData() {
+            fetch('stock_data.json')  // 假设 stock_data.json 和该 HTML 文件位于同一目录
+                .then(response => response.json())  // 解析 JSON
+                .then(data => {
+                    const tableBody = document.querySelector('#stock-table tbody');
+                    tableBody.innerHTML = '';  // 清空现有表格数据
                     
-                    Object.values(stock).forEach(value => {
-                        const cell = document.createElement('td');
-                        cell.textContent = value;  // 填充单元格内容
-                        row.appendChild(cell);
-                    });
+                    // 遍历 JSON 数据，生成表格行
+                    data.forEach(stock => {
+                        const row = document.createElement('tr');
+                        
+                        Object.values(stock).forEach(value => {
+                            const cell = document.createElement('td');
+                            cell.textContent = value;  // 填充单元格内容
+                            row.appendChild(cell);
+                        });
 
-                    tableBody.appendChild(row);
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('加载数据失败:', error);
+                    alert('数据加载失败，请稍后重试');
                 });
-            })
-            .catch(error => {
-                console.error('加载数据失败:', error);
-            });
+        }
+
+        // 刷新数据
+        function reloadData() {
+            loadData();  // 调用 loadData 函数重新加载数据
+        }
+
+        // 页面加载时自动调用 loadData
+        window.onload = loadData;
     </script>
 </body>
 </html>
