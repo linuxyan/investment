@@ -147,15 +147,20 @@
                     data.forEach(stock => {
                         const row = document.createElement('tr');
 
-                        // 获取相应的值
+                        // 获取相应的值并转为浮动数值
                         const latestPrice = parseFloat(stock['最新价']);
                         const peBuyPoint = parseFloat(stock['市盈率估值买点']);
                         const npBuyPoint = parseFloat(stock['净利润估值买点']);
+                        
+                        console.log(`处理股票：${stock['股票名称']} - 最新价: ${latestPrice}, 市盈率买点: ${peBuyPoint}, 净利润买点: ${npBuyPoint}`);
+
+                        // 添加容差值来避免浮动值误差
+                        const tolerance = 0.01;
 
                         // 判断条件并设置行背景颜色
-                        if (latestPrice <= peBuyPoint && latestPrice <= npBuyPoint) {
+                        if (latestPrice <= (peBuyPoint + tolerance) && latestPrice <= (npBuyPoint + tolerance)) {
                             row.classList.add('dark-green'); // 深绿色
-                        } else if (latestPrice <= peBuyPoint || latestPrice <= npBuyPoint) {
+                        } else if (latestPrice <= (peBuyPoint + tolerance) || latestPrice <= (npBuyPoint + tolerance)) {
                             row.classList.add('light-green'); // 浅绿色
                         }
 
