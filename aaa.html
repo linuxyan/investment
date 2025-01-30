@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票数据展示</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>股票数据列表</h1>
+    <table id="stock-table">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>股票名称</th>
+                <th>市盈率估值</th>
+                <th>净利润估值</th>
+                <th>最新价</th>
+                <th>市盈率估值买点</th>
+                <th>净利润估值买点</th>
+                <th>现价/买点%</th>
+                <th>市盈率(TTM)</th>
+                <th>合理市盈率</th>
+                <th>股息率(TTM)</th>
+                <th>预测净利润(亿)(w)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 数据行将会通过 JavaScript 插入 -->
+        </tbody>
+    </table>
+
+    <script>
+        // 加载 JSON 文件并动态生成表格内容
+        fetch('stock_data.json')  // 假设 stock_data.json 和该 HTML 文件位于同一目录
+            .then(response => response.json())  // 解析 JSON
+            .then(data => {
+                const tableBody = document.querySelector('#stock-table tbody');
+                
+                // 遍历 JSON 数据，生成表格行
+                data.forEach(stock => {
+                    const row = document.createElement('tr');
+                    
+                    Object.values(stock).forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;  // 填充单元格内容
+                        row.appendChild(cell);
+                    });
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('加载数据失败:', error);
+            });
+    </script>
+</body>
+</html>
