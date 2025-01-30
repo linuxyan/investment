@@ -2,61 +2,99 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>股票估值数据看板</title>
-    
     <style>
+        /* 基础样式 */
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             margin: 20px;
-            background-color: #f5f7fa;
+            background: #f0f2f5;
+            color: #333;
         }
+
+        /* 表格容器 */
         #tableContainer {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             overflow-x: auto;
+            padding: 15px;
+            min-width: 1200px;
         }
+
+        /* 表格样式 */
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            table-layout: fixed;
+            font-size: 0.9em;
         }
+
+        /* 表头样式 */
         th {
-            background-color: #2c3e50;
-            color: white;
-            padding: 12px;
-            position: sticky;
-            left: 0;
+            background: #2c3e50;
+            color: #fff;
+            padding: 12px 10px;
             text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            font-weight: 600;
+            border-bottom: 2px solid #1a2530;
         }
+
+        /* 数据行样式 */
         td {
             padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #eaecef;
+            vertical-align: top;
         }
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-        .positive {
-            color: #e74c3c;
-            font-weight: 500;
-        }
-        .negative {
-            color: #27ae60;
-            font-weight: 500;
-        }
-        .highlight {
-            background-color: #fff3cd;
-        }
+
+        /* 列宽分配 */
+        th:nth-child(1), td:nth-child(1) { width: 8%; }  /* 日期 */
+        th:nth-child(2), td:nth-child(2) { width: 14%; } /* 股票名称 */
+        th:nth-child(3), td:nth-child(3) { width: 7%; }  /* 市盈率估值 */
+        th:nth-child(4), td:nth-child(4) { width: 8%; }  /* 净利润估值 */
+        th:nth-child(5), td:nth-child(5) { width: 7%; }  /* 最新价 */
+        th:nth-child(6), td:nth-child(6) { width: 10%; } /* 市盈率估值买点 */
+        th:nth-child(7), td:nth-child(7) { width: 10%; } /* 净利润估值买点 */
+        th:nth-child(8), td:nth-child(8) { width: 12%; } /* 现价/买点% */
+        th:nth-child(9), td:nth-child(9) { width: 8%; }  /* 市盈率(TTM) */
+        th:nth-child(10), td:nth-child(10) { width: 8%; } /* 合理市盈率 */
+        th:nth-child(11), td:nth-child(11) { width: 7%; } /* 股息率(TTM) */
+        th:nth-child(12), td:nth-child(12) { width: 10%; }/* 预测净利润 */
+
+        /* 数字列样式 */
         .number {
             text-align: right;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 500;
+        }
+
+        /* 颜色方案 */
+        .positive { color: #e74c3c; }
+        .negative { color: #27ae60; }
+        .highlight { background-color: #f8f9fa; }
+
+        /* 交互效果 */
+        tr:hover { background-color: #f5f7fb; }
+        tr:nth-child(even) { background-color: #fafbfc; }
+        tr:hover:nth-child(even) { background-color: #f5f7fb; }
+
+        /* 响应式处理 */
+        @media screen and (max-width: 1400px) {
+            #tableContainer {
+                margin: 0 -20px;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
 <body>
+    <h2 style="margin:0 0 20px 10px; color: #2c3e50;">股票估值数据看板</h2>
     <div id="tableContainer">
-        <table id="stockTable">
+        <table>
             <thead>
                 <tr>
                     <th>日期</th>
@@ -78,44 +116,47 @@
     </div>
 
     <script>
-    // 动态加载数据
-    fetch('stock_data.json')
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.getElementById('tableBody');
-            
-            data.forEach(item => {
-                const [pePercent, npPercent] = item['现价/买点%'].split('|');
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.日期}</td>
-                    <td>${item.股票名称}</td>
-                    <td class="number">${formatNumber(item.市盈率估值, 2)}</td>
-                    <td class="number">¥${formatNumber(item.净利润估值, 2)}</td>
-                    <td class="number">¥${formatNumber(item.最新价, 2)}</td>
-                    <td class="number">${formatNumber(item.市盈率估值买点)}</td>
-                    <td class="number">${formatNumber(item.净利润估值买点)}</td>
-                    <td>
-                        <span class="${pePercent > 0 ? 'positive' : 'negative'}">${pePercent}%</span> | 
-                        <span class="${npPercent > 0 ? 'positive' : 'negative'}">${npPercent}%</span>
-                    </td>
-                    <td class="number highlight">${formatNumber(item['市盈率(TTM)'], 1)}</td>
-                    <td class="number">${formatNumber(item.合理市盈率, 1)}</td>
-                    <td class="number">${formatNumber(item['股息率(TTM)'], 2)}%</td>
-                    <td class="number">${formatNumber(item['fix_预测净利润(亿)(w)'], 2)}亿</td>
-                `;
-                tbody.appendChild(row);
+    // 数据加载与渲染
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('stock_data.json')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = data.map(item => `
+                    <tr>
+                        <td>${item.日期}</td>
+                        <td>${item.股票名称}</td>
+                        <td class="number">${formatNumber(item.市盈率估值, 2)}</td>
+                        <td class="number">¥${formatNumber(item.净利润估值, 2)}</td>
+                        <td class="number">¥${formatNumber(item.最新价, 2)}</td>
+                        <td class="number">${formatNumber(item.市盈率估值买点, 2)}</td>
+                        <td class="number">${formatNumber(item.净利润估值买点, 2)}</td>
+                        <td>${renderPercentage(item['现价/买点%'])}</td>
+                        <td class="number highlight">${formatNumber(item['市盈率(TTM)'], 1)}</td>
+                        <td class="number">${formatNumber(item.合理市盈率, 1)}</td>
+                        <td class="number">${formatNumber(item['股息率(TTM)'], 2)}%</td>
+                        <td class="number">${formatNumber(item['fix_预测净利润(亿)(w)'], 2)}亿</td>
+                    </tr>
+                `).join('');
             });
-        });
 
-    // 数字格式化函数
-    function formatNumber(value, decimals = 0) {
-        return Number(value).toLocaleString('zh-CN', {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
-        });
-    }
+        // 数字格式化
+        function formatNumber(value, decimals = 0) {
+            return Number(value).toLocaleString('zh-CN', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+        }
+
+        // 百分比渲染
+        function renderPercentage(str) {
+            const [pe, np] = str.split('|');
+            return `
+                <span class="${pe > 0 ? 'positive' : 'negative'}">${pe}%</span> | 
+                <span class="${np > 0 ? 'positive' : 'negative'}">${np}%</span>
+            `;
+        }
+    });
     </script>
 </body>
 </html>
