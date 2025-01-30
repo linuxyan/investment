@@ -90,6 +90,16 @@
         .refresh-button:active {
             background-color: #3e8e41;
         }
+
+        /* 自定义颜色 */
+        .light-green {
+            background-color: #d4f8d4;
+        }
+
+        .dark-green {
+            background-color: #8bc34a;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -136,7 +146,20 @@
                     // 遍历 JSON 数据，生成表格行
                     data.forEach(stock => {
                         const row = document.createElement('tr');
-                        
+
+                        // 获取相应的值
+                        const latestPrice = parseFloat(stock['最新价']);
+                        const peBuyPoint = parseFloat(stock['市盈率估值买点']);
+                        const npBuyPoint = parseFloat(stock['净利润估值买点']);
+
+                        // 判断条件并设置行背景颜色
+                        if (latestPrice <= peBuyPoint && latestPrice <= npBuyPoint) {
+                            row.classList.add('dark-green'); // 深绿色
+                        } else if (latestPrice <= peBuyPoint || latestPrice <= npBuyPoint) {
+                            row.classList.add('light-green'); // 浅绿色
+                        }
+
+                        // 创建表格单元格
                         Object.values(stock).forEach(value => {
                             const cell = document.createElement('td');
                             cell.textContent = value;  // 填充单元格内容
