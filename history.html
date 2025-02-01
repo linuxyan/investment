@@ -77,7 +77,9 @@
                         fontSize: 16,
                         fontWeight: 'bold'
                     },
-                    padding: [10, 0]
+                    left: 'center',
+                    top: 0,
+                    padding: [5, 0]
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -93,10 +95,12 @@
                     }
                 },
                 legend: {
-                    data: ['最新价格', '市盈率估值买点', '净利润估值买点']
+                    data: ['最新价格', '市盈率估值买点', '净利润估值买点'],
+                    top: 25
                 },
                 grid: {
-                    right: '10%'
+                    right: '10%',
+                    top: 60
                 },
                 xAxis: {
                     type: 'category',
