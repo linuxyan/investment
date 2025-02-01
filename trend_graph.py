@@ -46,7 +46,7 @@ for stock_code in stock_codes:
 
     stock_name = stock_data['股票名称'].unique()[0]
 
-    json_pd = stock_data[['日期','最新价','市盈率估值买点','净利润估值买点']].copy()
+    json_pd = stock_data[['日期','股票名称','最新价','市盈率估值买点','净利润估值买点']].copy()
     json_pd['日期'] = pd.to_datetime(json_pd['日期']).dt.strftime('%Y-%m-%d')
     # 转换为JSON格式
     json_data = json_pd.to_json(orient='records', force_ascii=False, indent=4)

@@ -64,6 +64,7 @@
         function renderChart(data) {
             const chart = echarts.init(document.getElementById('chartContainer'));
             
+            const stockName = data[0]['股票名称'];
             const dates = data.map(item => item['日期']);
             const prices = data.map(item => item['最新价']);
             const peBuyPoints = data.map(item => item['市盈率估值买点']);
@@ -71,12 +72,24 @@
 
             const option = {
                 title: {
-                    text: '股票估值趋势图'
+                    text: `${stockName} - 估值趋势图`,
+                    textStyle: {
+                        fontSize: 16,
+                        fontWeight: 'bold'
+                    },
+                    padding: [10, 0]
                 },
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
                         type: 'cross'
+                    },
+                    formatter: function(params) {
+                        let result = `${params[0].axisValue}<br/>`;
+                        params.forEach(param => {
+                            result += `${param.marker} ${param.seriesName}: ${param.value}<br/>`;
+                        });
+                        return result;
                     }
                 },
                 legend: {
