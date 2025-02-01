@@ -1,321 +1,316 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025-02-01</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>股票估值表</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 移除 number-cell 的右对齐样式，改为左对齐 */
+        .table td.number-cell {
+            text-align: left;
+            white-space: nowrap;  /* 防止数字换行 */
+        }
+        
+        /* 其他样式保持不变 */
+        tr {
+            transition: background-color 0.3s ease;
+        }
+        .light-green {
+            background-color: #81b581 !important;
+        }
+        .dark-green {
+            background-color: #4e904e !important;
+        }
+        
+        .table th, .table td {
+            white-space: nowrap;  /* 防止所有列换行 */
+            vertical-align: middle;  /* 垂直居中对齐 */
+            padding-left: 1rem;  /* 添加左侧内边距，使内容不会贴边 */
+        }
+        
+        /* 排序相关样式 */
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .sort-asc .sort-icon {
+            transform: rotate(180deg);
+        }
+        
+        .sort-desc .sort-icon {
+            transform: rotate(0deg);
+        }
+        
+        /* 设置表格容器的水平滚动 */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        
+        /* 增加容器最大宽度 */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1400px;
+            }
+        }
+        
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1600px;
+            }
+        }
+        
+        /* 为了保持悬停效果的一致性，也相应调整 hover 状态的颜色 */
+        .table-hover tbody tr.light-green:hover {
+            background-color: #81b581 !important;
+        }
+        
+        .table-hover tbody tr.dark-green:hover {
+            background-color: #4e904e !important;
+        }
+        
+        /* 标题容器样式 */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        /* 标题样式 */
+        .header-container h2 {
+            margin: 0;  /* 移除标题的默认外边距 */
+        }
+        
+        /* 更新时间和计算方式按钮的容器 */
+        .header-controls {
+            display: flex;
+            align-items: center;  /* 垂直居中对齐 */
+            gap: 1rem;
+        }
+        
+        /* 更新时间样式 */
+        .update-time {
+            text-align: right;
+            line-height: 1.5;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 计算方式链接样式 */
+        .info-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            white-space: nowrap;  /* 防止文字换行 */
+        }
+        
+        .info-link:hover {
+            background-color: #e9ecef;
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .info-icon {
+            margin-right: 6px;
+            font-style: normal;
+        }
+    </style>
 </head>
 <body>
-    <table class="stock-table">
-  <thead>
-    <tr style="text-align: right;">
-      <th>日期</th>
-      <th>股票名称</th>
-      <th>市盈率估值</th>
-      <th>净利润估值</th>
-      <th>最新价</th>
-      <th>市盈率估值买点</th>
-      <th>净利润估值买点</th>
-      <th>现价/买点%</th>
-      <th>市盈率(TTM)</th>
-      <th>合理市盈率</th>
-      <th>股息率(TTM)</th>
-      <th>预测净利润(3Y)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/贵州茅台.png" target="_blank">贵州茅台</a></td>
-      <td>0.65</td>
-      <td>0.66</td>
-      <td>1434.99</td>
-      <td>1103</td>
-      <td>1087</td>
-      <td>30|32</td>
-      <td>21.801</td>
-      <td>33.680</td>
-      <td>3.816</td>
-      <td>1017.525</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/片仔癀.png" target="_blank">片仔癀</a></td>
-      <td>0.64</td>
-      <td>0.61</td>
-      <td>202.51</td>
-      <td>158</td>
-      <td>165</td>
-      <td>28|22</td>
-      <td>39.676</td>
-      <td>61.650</td>
-      <td>1.713</td>
-      <td>40.805</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/五粮液.png" target="_blank">五粮液</a></td>
-      <td>0.62</td>
-      <td>0.69</td>
-      <td>127.20</td>
-      <td>102</td>
-      <td>92</td>
-      <td>24|38</td>
-      <td>15.282</td>
-      <td>24.615</td>
-      <td>5.697</td>
-      <td>364.250</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/海天味业.png" target="_blank">海天味业</a></td>
-      <td>0.77</td>
-      <td>0.79</td>
-      <td>40.99</td>
-      <td>26</td>
-      <td>25</td>
-      <td>57|63</td>
-      <td>37.287</td>
-      <td>48.540</td>
-      <td>1.610</td>
-      <td>74.715</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/伊利股份.png" target="_blank">伊利股份</a></td>
-      <td>0.74</td>
-      <td>0.93</td>
-      <td>27.83</td>
-      <td>18</td>
-      <td>14</td>
-      <td>54|98</td>
-      <td>14.867</td>
-      <td>20.105</td>
-      <td>4.312</td>
-      <td>119.000</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/招商银行.png" target="_blank">招商银行</a></td>
-      <td>1.00</td>
-      <td>1.17</td>
-      <td>40.65</td>
-      <td>24</td>
-      <td>20</td>
-      <td>69|103</td>
-      <td>7.027</td>
-      <td>7.060</td>
-      <td>4.851</td>
-      <td>1551.045</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/双汇发展.png" target="_blank">双汇发展</a></td>
-      <td>1.14</td>
-      <td>1.20</td>
-      <td>26.36</td>
-      <td>13</td>
-      <td>13</td>
-      <td>102|102</td>
-      <td>20.161</td>
-      <td>17.645</td>
-      <td>5.159</td>
-      <td>53.890</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/泸州老窖.png" target="_blank">泸州老窖</a></td>
-      <td>0.44</td>
-      <td>0.49</td>
-      <td>115.55</td>
-      <td>131</td>
-      <td>117</td>
-      <td>-11|-1</td>
-      <td>11.916</td>
-      <td>26.805</td>
-      <td>5.849</td>
-      <td>162.500</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/达仁堂.png" target="_blank">达仁堂</a></td>
-      <td>1.10</td>
-      <td>0.92</td>
-      <td>30.51</td>
-      <td>13</td>
-      <td>16</td>
-      <td>134|90</td>
-      <td>25.200</td>
-      <td>22.830</td>
-      <td>4.195</td>
-      <td>14.010</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/老凤祥.png" target="_blank">老凤祥</a></td>
-      <td>0.97</td>
-      <td>1.04</td>
-      <td>51.64</td>
-      <td>31</td>
-      <td>29</td>
-      <td>66|78</td>
-      <td>13.335</td>
-      <td>13.770</td>
-      <td>3.776</td>
-      <td>23.500</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/青岛啤酒.png" target="_blank">青岛啤酒</a></td>
-      <td>0.67</td>
-      <td>0.74</td>
-      <td>69.52</td>
-      <td>51</td>
-      <td>46</td>
-      <td>36|51</td>
-      <td>21.802</td>
-      <td>32.365</td>
-      <td>2.877</td>
-      <td>49.620</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/美的集团.png" target="_blank">美的集团</a></td>
-      <td>1.09</td>
-      <td>1.13</td>
-      <td>73.88</td>
-      <td>40</td>
-      <td>39</td>
-      <td>84|89</td>
-      <td>15.004</td>
-      <td>13.715</td>
-      <td>3.699</td>
-      <td>458.250</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/迈瑞医疗.png" target="_blank">迈瑞医疗</a></td>
-      <td>0.58</td>
-      <td>0.52</td>
-      <td>232.40</td>
-      <td>200</td>
-      <td>223</td>
-      <td>16|4</td>
-      <td>22.751</td>
-      <td>39.520</td>
-      <td>3.102</td>
-      <td>172.370</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/洋河股份.png" target="_blank">洋河股份</a></td>
-      <td>0.68</td>
-      <td>0.85</td>
-      <td>78.40</td>
-      <td>57</td>
-      <td>46</td>
-      <td>37|70</td>
-      <td>14.075</td>
-      <td>20.680</td>
-      <td>8.916</td>
-      <td>83.995</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/公牛集团.png" target="_blank">公牛集团</a></td>
-      <td>0.74</td>
-      <td>0.78</td>
-      <td>71.23</td>
-      <td>48</td>
-      <td>45</td>
-      <td>48|58</td>
-      <td>21.304</td>
-      <td>28.635</td>
-      <td>3.003</td>
-      <td>51.625</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/海康威视.png" target="_blank">海康威视</a></td>
-      <td>0.88</td>
-      <td>0.81</td>
-      <td>29.03</td>
-      <td>16</td>
-      <td>17</td>
-      <td>81|70</td>
-      <td>20.057</td>
-      <td>22.900</td>
-      <td>3.131</td>
-      <td>181.450</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/格力电器.png" target="_blank">格力电器</a></td>
-      <td>0.96</td>
-      <td>1.07</td>
-      <td>44.89</td>
-      <td>28</td>
-      <td>25</td>
-      <td>60|79</td>
-      <td>8.141</td>
-      <td>8.490</td>
-      <td>5.331</td>
-      <td>346.845</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/恒瑞医药.png" target="_blank">恒瑞医药</a></td>
-      <td>0.88</td>
-      <td>0.79</td>
-      <td>44.65</td>
-      <td>25</td>
-      <td>28</td>
-      <td>78|59</td>
-      <td>52.278</td>
-      <td>59.585</td>
-      <td>0.448</td>
-      <td>75.810</td>
-    </tr>
-    <tr>
-      <td>2025-02-01</td>
-      <td><a href="/investment/trend_graph/药明康德.png" target="_blank">药明康德</a></td>
-      <td>0.51</td>
-      <td>0.44</td>
-      <td>55.36</td>
-      <td>54</td>
-      <td>62</td>
-      <td>2|-10</td>
-      <td>19.828</td>
-      <td>38.595</td>
-      <td>1.803</td>
-      <td>116.600</td>
-    </tr>
-  </tbody>
-</table>
-    <p>date(w):2025-01-27   date(d):2025-02-01</p>
+    <div class="container mt-4">
+        <div class="header-container">
+            <h2>股票估值表</h2>
+            <div class="header-controls">
+                <div class="update-time">
+                    <div>周数据更新时间：<span id="lastUpdateTimeWeek">-</span></div>
+                    <div>日数据更新时间：<span id="lastUpdateTimeDay">-</span></div>
+                </div>
+                <a href="/investment/calculation.html" class="info-link">
+                    <i class="info-icon">ℹ</i>
+                    <span>计算方式说明</span>
+                </a>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>股票代码</th>
+                        <th>股票名称</th>
+                        <th class="number-cell">最新价</th>
+                        <th class="number-cell sortable" data-field="市盈率估值">
+                            市盈率估值
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="number-cell sortable" data-field="净利润估值">
+                            净利润估值
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="number-cell">市盈率估值买点</th>
+                        <th class="number-cell">净利润估值买点</th>
+                        <th class="number-cell">现价/买点%</th>
+                        <th class="number-cell">市盈率(TTM)</th>
+                        <th class="number-cell">合理市盈率</th>
+                        <th class="number-cell">股息率(TTM)</th>
+                        <th class="number-cell">预测净利润(3Y)</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('.stock-table tbody tr');
+        let currentSortField = '';
+        let isAscending = true;
 
-            rows.forEach(row => {
-                const price = parseFloat(row.querySelector('td:nth-child(5)').textContent);
-                const peBuyPoint = parseFloat(row.querySelector('td:nth-child(6)').textContent);
-                const profitBuyPoint = parseFloat(row.querySelector('td:nth-child(7)').textContent);
-
-                if ( price <= peBuyPoint ) {
-                    row.classList.add('green-light');
-                }
-
-                if ( price <= profitBuyPoint ) {
-                    row.classList.add('green-light');
-                }
-
-                if ( price <= peBuyPoint && price <= profitBuyPoint ) {
-                    row.classList.add('green-dark');
-                }
+        function sortData(data, field) {
+            return data.sort((a, b) => {
+                const valueA = parseFloat(a[field]) || 0;
+                const valueB = parseFloat(b[field]) || 0;
+                return isAscending ? valueA - valueB : valueB - valueA;
             });
-        });
+        }
+
+        function initSortButtons() {
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const field = header.dataset.field;
+                    
+                    // 清除其他列的排序状态
+                    document.querySelectorAll('.sortable').forEach(h => {
+                        if (h !== header) {
+                            h.classList.remove('sort-asc', 'sort-desc');
+                        }
+                    });
+
+                    // 切换排序方向
+                    if (currentSortField === field) {
+                        isAscending = !isAscending;
+                    } else {
+                        currentSortField = field;
+                        isAscending = true;
+                    }
+
+                    // 更新排序图标
+                    header.classList.toggle('sort-asc', isAscending);
+                    header.classList.toggle('sort-desc', !isAscending);
+
+                    // 重新渲染表格
+                    renderTable(sortData([...tableData], field));
+                });
+            });
+        }
+
+        let tableData = [];  // 存储原始数据
+
+        async function loadStockData() {
+            try {
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/investment/trend_graph/last.json?t=${timestamp}`);
+                tableData = await response.json();
+                renderTable(tableData);
+                initSortButtons();
+            } catch (error) {
+                console.error('加载数据失败:', error);
+            }
+        }
+
+        async function loadLastUpdateTime() {
+            try {
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/investment/trend_graph/last_date.json?t=${timestamp}`);
+                const data = await response.json();
+                document.getElementById('lastUpdateTimeWeek').textContent = data.date_w || '-';
+                document.getElementById('lastUpdateTimeDay').textContent = data.date_d || '-';
+            } catch (error) {
+                console.error('加载更新时间失败:', error);
+                document.getElementById('lastUpdateTimeWeek').textContent = '-';
+                document.getElementById('lastUpdateTimeDay').textContent = '-';
+            }
+        }
+
+        function formatNumber(num, decimals = 2) {
+            if (num === null || num === undefined || isNaN(num)) {
+                return '-';
+            }
+            try {
+                return new Intl.NumberFormat('zh-CN', {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals
+                }).format(num);
+            } catch (error) {
+                console.error('数据格式化失败:', error, num);
+                return '-';
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('stockTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(stock => {
+                const row = document.createElement('tr');
+                const latest_price = parseFloat(stock['最新价']) || 0;
+                const pe_buy_point = parseFloat(stock['市盈率估值买点']) || 0;
+                const profit_buy_point = parseFloat(stock['净利润估值买点']) || 0;
+                
+                const isLightGreen = latest_price <= pe_buy_point || 
+                                   latest_price <= profit_buy_point;
+                const isDarkGreen = latest_price <= pe_buy_point && 
+                                  latest_price <= profit_buy_point;
+                
+                if (isDarkGreen) {
+                    row.classList.add('dark-green');
+                } else if (isLightGreen) {
+                    row.classList.add('light-green');
+                }
+
+                row.innerHTML = `
+                    <td>${stock['日期'] || '-'}</td>
+                    <td><a href="/investment/history.html?code=${stock['股票代码']}">${stock['股票代码']}</a></td>
+                    <td>${stock['股票名称']}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['最新价']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['市盈率估值']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['净利润估值']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['市盈率估值买点']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['净利润估值买点']))}</td>
+                    <td class="number-cell">${stock['现价/买点%']}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['市盈率(TTM)']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['合理市盈率']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['股息率(TTM)']))}%</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['预测净利润(3Y)']))}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function initialize() {
+            await Promise.all([
+                loadStockData(),
+                loadLastUpdateTime()
+            ]);
+        }
+
+        // 修改入口函数调用
+        initialize();
     </script>
 </body>
-</html>
+</html> 
