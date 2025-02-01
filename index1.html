@@ -26,6 +26,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
+                    <th>日期</th>
                     <th>股票代码</th>
                     <th>股票名称</th>
                     <th class="number-cell">最新价</th>
@@ -76,9 +77,9 @@
 
             data.forEach(stock => {
                 const row = document.createElement('tr');
-                const latest_price = parseFloat(stock.latest_price) || 0;
-                const pe_buy_point = parseFloat(stock.pe_buy_point) || 0;
-                const profit_buy_point = parseFloat(stock.profit_buy_point) || 0;
+                const latest_price = parseFloat(stock['最新价']) || 0;
+                const pe_buy_point = parseFloat(stock['市盈率估值买点']) || 0;
+                const profit_buy_point = parseFloat(stock['净利润估值买点']) || 0;
                 
                 const isLightGreen = latest_price <= pe_buy_point || 
                                    latest_price <= profit_buy_point;
@@ -92,18 +93,19 @@
                 }
 
                 row.innerHTML = `
-                    <td><a href="/investment/history.html?code=${stock.code}">${stock.code}</a></td>
-                    <td>${stock.name}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.latest_price))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.pe_value))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.profit_value))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.pe_buy_point))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.profit_buy_point))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.price_to_buy_point_ratio) * 100)}%</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.pe_ttm))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.reasonable_pe))}</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.dividend_yield) * 100)}%</td>
-                    <td class="number-cell">${formatNumber(parseFloat(stock.predicted_profit_3y))}</td>
+                    <td>${stock['日期'] || '-'}</td>
+                    <td><a href="/investment/history.html?code=${stock['股票代码']}">${stock['股票代码']}</a></td>
+                    <td>${stock['股票名称']}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['最新价']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['市盈率估值']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['净利润估值']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['市盈率估值买点']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['净利润估值买点']))}</td>
+                    <td class="number-cell">${stock['现价/买点%']}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['市盈率(TTM)']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['合理市盈率']))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['股息率(TTM)']))}%</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['预测净利润(3Y)']))}</td>
                 `;
                 tbody.appendChild(row);
             });
