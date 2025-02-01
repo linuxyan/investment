@@ -44,6 +44,26 @@
                 max-width: 1600px;
             }
         }
+
+        /* 排序相关样式 */
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .sort-asc .sort-icon {
+            transform: rotate(180deg);
+        }
+        
+        .sort-desc .sort-icon {
+            transform: rotate(0deg);
+        }
     </style>
 </head>
 <body>
@@ -57,8 +77,14 @@
                         <th>股票代码</th>
                         <th>股票名称</th>
                         <th class="number-cell">最新价</th>
-                        <th class="number-cell">市盈率估值</th>
-                        <th class="number-cell">净利润估值</th>
+                        <th class="number-cell sortable" data-field="市盈率估值">
+                            市盈率估值
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="number-cell sortable" data-field="净利润估值">
+                            净利润估值
+                            <span class="sort-icon">↕</span>
+                        </th>
                         <th class="number-cell">市盈率估值买点</th>
                         <th class="number-cell">净利润估值买点</th>
                         <th class="number-cell">现价/买点%</th>
@@ -74,11 +100,55 @@
     </div>
 
     <script>
+        let currentSortField = '';
+        let isAscending = true;
+
+        function sortData(data, field) {
+            return data.sort((a, b) => {
+                const valueA = parseFloat(a[field]) || 0;
+                const valueB = parseFloat(b[field]) || 0;
+                return isAscending ? valueA - valueB : valueB - valueA;
+            });
+        }
+
+        function initSortButtons() {
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const field = header.dataset.field;
+                    
+                    // 清除其他列的排序状态
+                    document.querySelectorAll('.sortable').forEach(h => {
+                        if (h !== header) {
+                            h.classList.remove('sort-asc', 'sort-desc');
+                        }
+                    });
+
+                    // 切换排序方向
+                    if (currentSortField === field) {
+                        isAscending = !isAscending;
+                    } else {
+                        currentSortField = field;
+                        isAscending = true;
+                    }
+
+                    // 更新排序图标
+                    header.classList.toggle('sort-asc', isAscending);
+                    header.classList.toggle('sort-desc', !isAscending);
+
+                    // 重新渲染表格
+                    renderTable(sortData([...tableData], field));
+                });
+            });
+        }
+
+        let tableData = [];  // 存储原始数据
+
         async function loadStockData() {
             try {
                 const response = await fetch('/investment/trend_graph/curr.json');
-                const data = await response.json();
-                renderTable(data);
+                tableData = await response.json();  // 保存原始数据
+                renderTable(tableData);
+                initSortButtons();  // 初始化排序按钮
             } catch (error) {
                 console.error('加载数据失败:', error);
             }
