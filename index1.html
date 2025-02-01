@@ -8,6 +8,7 @@
     <style>
         .table td.number-cell {
             text-align: right;
+            white-space: nowrap;  /* 防止数字换行 */
         }
         tr {
             transition: background-color 0.3s ease;
@@ -18,31 +19,49 @@
         .dark-green {
             background-color: #ccffcc !important;
         }
+        
+        /* 新增样式 */
+        .table th {
+            white-space: nowrap;  /* 防止表头换行 */
+            vertical-align: middle;  /* 垂直居中对齐 */
+        }
+        
+        .table td {
+            vertical-align: middle;  /* 垂直居中对齐 */
+        }
+        
+        /* 设置表格容器的水平滚动 */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-4">
         <h2>股票估值表</h2>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>日期</th>
-                    <th>股票代码</th>
-                    <th>股票名称</th>
-                    <th class="number-cell">最新价</th>
-                    <th class="number-cell">市盈率估值</th>
-                    <th class="number-cell">净利润估值</th>
-                    <th class="number-cell">市盈率估值买点</th>
-                    <th class="number-cell">净利润估值买点</th>
-                    <th class="number-cell">现价/买点%</th>
-                    <th class="number-cell">市盈率(TTM)</th>
-                    <th class="number-cell">合理市盈率</th>
-                    <th class="number-cell">股息率(TTM)</th>
-                    <th class="number-cell">预测净利润(3Y)</th>
-                </tr>
-            </thead>
-            <tbody id="stockTableBody"></tbody>
-        </table>
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>股票代码</th>
+                        <th>股票名称</th>
+                        <th class="number-cell">最新价</th>
+                        <th class="number-cell">市盈率估值</th>
+                        <th class="number-cell">净利润估值</th>
+                        <th class="number-cell">市盈率估值买点</th>
+                        <th class="number-cell">净利润估值买点</th>
+                        <th class="number-cell">现价/买点%</th>
+                        <th class="number-cell">市盈率(TTM)</th>
+                        <th class="number-cell">合理市盈率</th>
+                        <th class="number-cell">股息率(TTM)</th>
+                        <th class="number-cell">预测净利润(3Y)</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
