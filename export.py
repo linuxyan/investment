@@ -50,7 +50,7 @@ save_img(last_df,current_date_str)
 
 
 # 给URL列添加超链接
-last_df['股票名称'] = df['股票名称'].apply(lambda x: f'<a href="/trend_graph/{x}.png" target="_blank">{x}</a>')
+last_df['股票名称'] = df['股票名称'].apply(lambda x: f'<a href="/investment/trend_graph/{x}.png" target="_blank">{x}</a>')
 print(last_df)
 last_df.to_html('dataframe.html', escape=False, index=False)
 

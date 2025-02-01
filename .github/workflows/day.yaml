@@ -43,6 +43,7 @@ jobs:
           python data_weekly.py
           python data_day.py
           python export.py
+          python trend_graph.py
           # python wx.py
 
       - name: Commit
