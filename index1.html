@@ -87,6 +87,37 @@
             text-align: right;  /* 右对齐文本 */
             line-height: 1.5;   /* 增加行间距 */
         }
+        
+        /* 计算方式链接样式 */
+        .calculation-link {
+            position: absolute;
+            top: 1rem;
+            left: 200px;  /* 根据实际标题宽度调整 */
+        }
+        
+        .info-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .info-link:hover {
+            background-color: #e9ecef;
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .info-icon {
+            margin-right: 6px;
+            font-style: normal;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +127,12 @@
             <div class="update-time">
                 <div>周数据更新时间：<span id="lastUpdateTimeWeek">-</span></div>
                 <div>日数据更新时间：<span id="lastUpdateTimeDay">-</span></div>
+            </div>
+            <div class="calculation-link">
+                <a href="/investment/calculation.html" class="info-link">
+                    <i class="info-icon">ℹ</i>
+                    <span>计算方式说明</span>
+                </a>
             </div>
         </div>
         <div class="table-container">
