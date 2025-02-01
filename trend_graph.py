@@ -1,13 +1,9 @@
 import os
 import pandas as pd
-from matplotlib.font_manager import FontProperties
 
 """
 绘制每只股票的最新价和买点价的长期趋势图
 """
-
-font_path = "fonts/SimHei.ttf"
-font_prop = FontProperties(fname=font_path)
 
 # 设置数据目录
 data_dir = "data/export/"

@@ -77,19 +77,28 @@
             background-color: #4e904e !important;
         }
         
+        /* 标题容器样式 */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        /* 标题样式 */
+        .header-container h2 {
+            margin: 0;  /* 移除标题的默认外边距 */
+        }
+        
         /* 更新时间和计算方式按钮的容器 */
         .header-controls {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
             display: flex;
-            align-items: flex-start;
-            gap: 1rem;  /* 控件之间的间距 */
+            align-items: center;  /* 垂直居中对齐 */
+            gap: 1rem;
         }
         
         /* 更新时间样式 */
         .update-time {
-            position: static;  /* 移除绝对定位 */
             text-align: right;
             line-height: 1.5;
             font-size: 14px;
@@ -125,7 +134,7 @@
 </head>
 <body>
     <div class="container mt-4">
-        <div class="position-relative">
+        <div class="header-container">
             <h2>股票估值表</h2>
             <div class="header-controls">
                 <div class="update-time">
