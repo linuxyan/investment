@@ -17,10 +17,10 @@
             transition: background-color 0.3s ease;
         }
         .light-green {
-            background-color: #e6ffe6 !important;
+            background-color: #b8ffb8 !important;
         }
         .dark-green {
-            background-color: #ccffcc !important;
+            background-color: #85ff85 !important;
         }
         
         .table th, .table td {
@@ -66,6 +66,15 @@
             .container {
                 max-width: 1600px;
             }
+        }
+        
+        /* 为了保持悬停效果的一致性，也相应调整 hover 状态的颜色 */
+        .table-hover tbody tr.light-green:hover {
+            background-color: #a9ffa9 !important;
+        }
+        
+        .table-hover tbody tr.dark-green:hover {
+            background-color: #76ff76 !important;
         }
     </style>
 </head>
