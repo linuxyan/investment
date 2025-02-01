@@ -55,24 +55,4 @@ for stock_code in stock_codes:
     with open(f'trend_graph/{stock_code}.json', 'w', encoding='utf-8') as f:
         f.write(json_data)
 
-    plt.figure(figsize=(15, 6))
-    plt.plot(stock_data['日期'], stock_data['最新价'], label='最新价', marker='', linestyle='-')
-    plt.plot(stock_data['日期'], stock_data['市盈率估值买点'], label='市盈率估值买点', marker='', linestyle='-')
-    plt.plot(stock_data['日期'], stock_data['净利润估值买点'], label='净利润估值买点', marker='', linestyle='-')
-
-    # 设置图表标题和标签
-    plt.title(f'{stock_name} - 价格买卖点变化趋势', fontproperties=font_prop)
-    plt.xlabel('日期', fontproperties=font_prop)
-    plt.ylabel('价格', fontproperties=font_prop)
-    plt.legend(prop=font_prop)
-    plt.grid(True)
-
-    # 显示图表
-    # 设置 x 轴日期格式和间隔
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))  # 每5天显示一个刻度
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # 自定义日期格式
-    plt.xticks(rotation=45, fontproperties=font_prop)
-    plt.tight_layout()
-
-    plt.savefig(f'trend_graph/{stock_name}.png', bbox_inches='tight', pad_inches=0, dpi=300)
 

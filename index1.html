@@ -76,11 +76,28 @@
         .table-hover tbody tr.dark-green:hover {
             background-color: #4e904e !important;
         }
+        
+        /* 添加更新时间样式 */
+        .update-time {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 14px;
+            color: #666;
+            text-align: right;  /* 右对齐文本 */
+            line-height: 1.5;   /* 增加行间距 */
+        }
     </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h2>股票估值表</h2>
+        <div class="position-relative">
+            <h2>股票估值表</h2>
+            <div class="update-time">
+                <div>周数据更新时间：<span id="lastUpdateTimeWeek">-</span></div>
+                <div>日数据更新时间：<span id="lastUpdateTimeDay">-</span></div>
+            </div>
+        </div>
         <div class="table-container">
             <table class="table table-hover">
                 <thead>
@@ -157,12 +174,25 @@
 
         async function loadStockData() {
             try {
-                const response = await fetch('/investment/trend_graph/curr.json');
+                const response = await fetch('/investment/trend_graph/last.json');
                 tableData = await response.json();  // 保存原始数据
                 renderTable(tableData);
                 initSortButtons();  // 初始化排序按钮
             } catch (error) {
                 console.error('加载数据失败:', error);
+            }
+        }
+
+        async function loadLastUpdateTime() {
+            try {
+                const response = await fetch('/investment/trend_graph/last_date.json');
+                const data = await response.json();
+                document.getElementById('lastUpdateTimeWeek').textContent = data.date_w || '-';
+                document.getElementById('lastUpdateTimeDay').textContent = data.date_d || '-';
+            } catch (error) {
+                console.error('加载更新时间失败:', error);
+                document.getElementById('lastUpdateTimeWeek').textContent = '-';
+                document.getElementById('lastUpdateTimeDay').textContent = '-';
             }
         }
 
@@ -221,7 +251,15 @@
             });
         }
 
-        loadStockData();
+        async function initialize() {
+            await Promise.all([
+                loadStockData(),
+                loadLastUpdateTime()
+            ]);
+        }
+
+        // 修改入口函数调用
+        initialize();
     </script>
 </body>
 </html> 
