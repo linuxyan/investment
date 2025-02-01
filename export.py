@@ -46,9 +46,13 @@ df['现价/买点%'] = df['市盈率估值买点%'].astype(str) + '|' + df['净�
 # 显示结果
 last_df = df[['日期', '股票名称', '市盈率估值', '净利润估值', '最新价', '市盈率估值买点', '净利润估值买点', '现价/买点%', '市盈率(TTM)', '合理市盈率','股息率(TTM)','fix_预测净利润(亿)(w)']].copy()
 last_df = last_df.rename(columns={'fix_预测净利润(亿)(w)': '预测净利润(3Y)'})
-print(last_df)
-last_df.to_html('dataframe.html', index=False)
+save_img(last_df,current_date_str)
 
+
+# 给URL列添加超链接
+last_df['股票名称'] = df['股票名称'].apply(lambda x: f'<a href="/trend_graph/{x}.png" target="_blank">{x}</a>')
+print(last_df)
+last_df.to_html('dataframe.html', escape=False, index=False)
 
 with open('dataframe.html', 'r', encoding='utf-8') as f: table_content = f.read()
 table_content = table_content.replace('border="1" class="dataframe"', 'class="stock-table"')
@@ -61,5 +65,5 @@ index_content = index_content.replace('date_w', date_w).replace('date_d', date_d
 with open('index.html', 'w', encoding='utf-8') as f: f.write(index_content)
 
 name_list_str = ' | '.join(last_df['股票名称'].tolist())
-save_img(last_df,current_date_str)
+
 push_content(current_date_str, name_list_str)

@@ -65,5 +65,5 @@ for stock_code in stock_codes:
     plt.xticks(rotation=45, fontproperties=font_prop)
     plt.tight_layout()
 
-    plt.savefig(f'trend_graph/{stock_code}.png', bbox_inches='tight', pad_inches=0, dpi=300)
+    plt.savefig(f'trend_graph/{stock_name}.png', bbox_inches='tight', pad_inches=0, dpi=300)
 
