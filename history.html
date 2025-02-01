@@ -53,7 +53,8 @@
             const code = urlParams.get('code');
             
             try {
-                const response = await fetch(`/investment/trend_graph/${code}.json`);
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/investment/trend_graph/${code}.json?t=${timestamp}`);
                 const data = await response.json();
                 renderChart(data);
             } catch (error) {

@@ -174,10 +174,11 @@
 
         async function loadStockData() {
             try {
-                const response = await fetch('/investment/trend_graph/last.json');
-                tableData = await response.json();  // 保存原始数据
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/investment/trend_graph/last.json?t=${timestamp}`);
+                tableData = await response.json();
                 renderTable(tableData);
-                initSortButtons();  // 初始化排序按钮
+                initSortButtons();
             } catch (error) {
                 console.error('加载数据失败:', error);
             }
@@ -185,7 +186,8 @@
 
         async function loadLastUpdateTime() {
             try {
-                const response = await fetch('/investment/trend_graph/last_date.json');
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/investment/trend_graph/last_date.json?t=${timestamp}`);
                 const data = await response.json();
                 document.getElementById('lastUpdateTimeWeek').textContent = data.date_w || '-';
                 document.getElementById('lastUpdateTimeDay').textContent = data.date_d || '-';
