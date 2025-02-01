@@ -56,10 +56,18 @@
         }
 
         function formatNumber(num, decimals = 2) {
-            return new Intl.NumberFormat('zh-CN', {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }).format(num);
+            if (num === null || num === undefined || isNaN(num)) {
+                return '-';
+            }
+            try {
+                return new Intl.NumberFormat('zh-CN', {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals
+                }).format(num);
+            } catch (error) {
+                console.error('数据格式化失败:', error, num);
+                return '-';
+            }
         }
 
         function renderTable(data) {
@@ -68,10 +76,14 @@
 
             data.forEach(stock => {
                 const row = document.createElement('tr');
-                const isLightGreen = stock.latest_price <= stock.pe_buy_point || 
-                                   stock.latest_price <= stock.profit_buy_point;
-                const isDarkGreen = stock.latest_price <= stock.pe_buy_point && 
-                                  stock.latest_price <= stock.profit_buy_point;
+                const latest_price = parseFloat(stock.latest_price) || 0;
+                const pe_buy_point = parseFloat(stock.pe_buy_point) || 0;
+                const profit_buy_point = parseFloat(stock.profit_buy_point) || 0;
+                
+                const isLightGreen = latest_price <= pe_buy_point || 
+                                   latest_price <= profit_buy_point;
+                const isDarkGreen = latest_price <= pe_buy_point && 
+                                  latest_price <= profit_buy_point;
                 
                 if (isDarkGreen) {
                     row.classList.add('dark-green');
@@ -82,16 +94,16 @@
                 row.innerHTML = `
                     <td><a href="/investment/history.html?code=${stock.code}">${stock.code}</a></td>
                     <td>${stock.name}</td>
-                    <td class="number-cell">${formatNumber(stock.latest_price)}</td>
-                    <td class="number-cell">${formatNumber(stock.pe_value)}</td>
-                    <td class="number-cell">${formatNumber(stock.profit_value)}</td>
-                    <td class="number-cell">${formatNumber(stock.pe_buy_point)}</td>
-                    <td class="number-cell">${formatNumber(stock.profit_buy_point)}</td>
-                    <td class="number-cell">${formatNumber(stock.price_to_buy_point_ratio * 100)}%</td>
-                    <td class="number-cell">${formatNumber(stock.pe_ttm)}</td>
-                    <td class="number-cell">${formatNumber(stock.reasonable_pe)}</td>
-                    <td class="number-cell">${formatNumber(stock.dividend_yield * 100)}%</td>
-                    <td class="number-cell">${formatNumber(stock.predicted_profit_3y)}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.latest_price))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.pe_value))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.profit_value))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.pe_buy_point))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.profit_buy_point))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.price_to_buy_point_ratio) * 100)}%</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.pe_ttm))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.reasonable_pe))}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.dividend_yield) * 100)}%</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock.predicted_profit_3y))}</td>
                 `;
                 tbody.appendChild(row);
             });
