@@ -46,6 +46,15 @@ for stock_code in stock_codes:
 
     stock_name = stock_data['股票名称'].unique()[0]
 
+    json_pd = stock_data[['日期','最新价','市盈率估值买点','净利润估值买点']].copy()
+    json_pd['日期'] = pd.to_datetime(json_pd['日期']).dt.strftime('%Y-%m-%d')
+    # 转换为JSON格式
+    json_data = json_pd.to_json(orient='records', force_ascii=False, indent=4)
+    
+    # 保存到文件
+    with open(f'trend_graph/{stock_code}.json', 'w', encoding='utf-8') as f:
+        f.write(json_data)
+
     plt.figure(figsize=(15, 6))
     plt.plot(stock_data['日期'], stock_data['最新价'], label='最新价', marker='', linestyle='-')
     plt.plot(stock_data['日期'], stock_data['市盈率估值买点'], label='市盈率估值买点', marker='', linestyle='-')
