@@ -87,11 +87,11 @@ def process_positions():
             
             # 如果是港股，将市值和盈亏数据从港币转换为人民币
             if stock_code.lower().startswith("hk"):
-                market_value = round(market_value * hk_rate, 2)
+                market_value = market_value * hk_rate
                 profit_loss = profit_loss * hk_rate
 
             portfolio_total_value += market_value
-
+            portfolio_total_value = round(portfolio_total_value, 2)
             # 更新数据字典供前端展示
             row.update({
                 "当前价": current_price,
