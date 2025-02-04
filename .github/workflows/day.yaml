@@ -44,6 +44,7 @@ jobs:
           python data_day.py
           python export.py
           python trend_graph.py
+          python portfolio_manager.py
           # python wx.py
 
       - name: Commit
