@@ -80,6 +80,8 @@
             .then(data => {
                 if(data && data.rates && data.rates.CNY) {
                     hkExchangeRate = data.rates.CNY;
+                    // 实时汇率获取成功后立即调用 updateMarketData() 更新数据
+                    updateMarketData();
                 }
             })
             .catch(err => console.error("汇率获取失败:", err));
