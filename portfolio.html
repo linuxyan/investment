@@ -73,7 +73,7 @@
         let stockIds = [];
         let staticLoaded = false;
         // 默认港币兑人民币汇率，稍后通过接口更新
-        let hkExchangeRate = 0.85;
+        let hkExchangeRate = 0.90;
         // 获取实时汇率（HKD -> CNY）
         fetch("https://api.exchangerate-api.com/v4/latest/HKD")
             .then(res => res.json())
