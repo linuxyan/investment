@@ -7,7 +7,6 @@ from config import BASIC_DATA_CSV
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-
 def weekly_data_update() -> pd.DataFrame:
     """
     市盈率 ak.get_stock_indicator_data
@@ -34,10 +33,15 @@ def weekly_data_update() -> pd.DataFrame:
 
 
 @retry(delay=2, tries=5, logger=None)
-def get_stock_pettm_mean(symbol, years = 5):
+def get_stock_pettm_mean(symbol, years=5):
     try:
         # 获取股票指标数据
-        indicator_data = ak.stock_a_indicator_lg(symbol=symbol)
+        if symbol.lower().startswith('hk'):  # 处理港股数据
+            indicator_data = ak.stock_hk_valuation_baidu(symbol=symbol[2:], indicator="市盈率(TTM)", period="全部")
+            indicator_data = indicator_data.rename(columns={'date': 'trade_date', 'value': 'pe_ttm'})
+        else:
+            indicator_data = ak.stock_a_indicator_lg(symbol=symbol)
+
         indicator_data.set_index('trade_date', inplace=True)
         today = datetime.today().date()
 
@@ -59,23 +63,30 @@ def get_stock_pettm_mean(symbol, years = 5):
 def get_stock_net_profit(symbol):
     try:
         # 获取股票指标数据
-        indicator_data = ak.stock_profit_forecast_ths(symbol=symbol, indicator="预测年报净利润")
+        if symbol.lower().startswith('hk'):  # 处理港股数据
+            indicator_data = ak.stock_hk_profit_forecast_et(symbol=symbol[2:], indicator="综合盈利预测")
+            max_year = indicator_data['财政年度'].max()
+            min_value_for_max_year = indicator_data.loc[indicator_data['纯利/亏损'].idxmax(), '纯利/亏损']
+            min_value_for_max_year = min_value_for_max_year / 100  # 单位从百万转为亿
+            min_value_for_max_year_fix = min_value_for_max_year
+            # indicator_data = indicator_data.rename(columns={'财政年度': '年度', 'value': 'pe_ttm'})
+        else:
+            indicator_data = ak.stock_profit_forecast_ths(symbol=symbol, indicator="预测年报净利润")
+            max_year = indicator_data['年度'].max()
+            min_value_for_max_year = round((( float(indicator_data.loc[indicator_data['年度'] == max_year, '最小值'].values[0]) + \
+                                    float(indicator_data.loc[indicator_data['年度'] == max_year, '均值'].values[0]) ) / 2), 2)
 
-        max_year = indicator_data['年度'].max()
-        min_value_for_max_year = round((( float(indicator_data.loc[indicator_data['年度'] == max_year, '最小值'].values[0]) + \
-                                 float(indicator_data.loc[indicator_data['年度'] == max_year, '均值'].values[0]) ) / 2), 2)
         column_name = '预测净利润(亿)(w)'
-
-        # 平均三年后的预测净利润，如果业绩增速年化大于25，则修正为8折
-        indicator_data = ak.stock_profit_forecast_ths(symbol=symbol, indicator="业绩预测详表-详细指标预测")
-        net_profit_value = float(str(indicator_data.iloc[3, 3]).replace('亿',''))  # 最近一年实际净利润
-        net_profit_value = float("{:.2f}".format(net_profit_value))
-
-        # 三年后的净利润大于最近一年的实际净利润1.95倍(年化净利润增速25%) 1 * 1.25 * 1.25 * 1.25 = 1.95
-        # 则修正净利润增速为20%
-        min_value_for_max_year_fix = min_value_for_max_year
-        if min_value_for_max_year / net_profit_value >= 1.95:
-            min_value_for_max_year_fix = net_profit_value * 1.20 * 1.20 * 1.20  # 修正三年后的净利润
+        if not symbol.lower().startswith('hk'):
+            # 平均三年后的预测净利润，如果业绩增速年化大于25，则修正为8折
+            indicator_data = ak.stock_profit_forecast_ths(symbol=symbol, indicator="业绩预测详表-详细指标预测")
+            net_profit_value = float(str(indicator_data.iloc[3, 3]).replace('亿',''))  # 最近一年实际净利润
+            net_profit_value = float("{:.2f}".format(net_profit_value))
+            # 三年后的净利润大于最近一年的实际净利润1.95倍(年化净利润增速25%) 1 * 1.25 * 1.25 * 1.25 = 1.95
+            # 则修正净利润增速为20%
+            min_value_for_max_year_fix = min_value_for_max_year
+            if min_value_for_max_year / net_profit_value >= 1.95:
+                min_value_for_max_year_fix = net_profit_value * 1.20 * 1.20 * 1.20  # 修正三年后的净利润
 
         return ['预测年份', column_name, 'fix_'+column_name], [max_year, min_value_for_max_year, min_value_for_max_year_fix]
     except Exception as e:

@@ -46,6 +46,8 @@ def add_prefix(symbol):
         return 'SH' + symbol
     elif symbol.startswith('00') or symbol.startswith('30'):
         return 'SZ' + symbol
+    elif symbol.lower().startswith('hk'):
+        return symbol[2:]
     else:
         return symbol
 
