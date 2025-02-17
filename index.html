@@ -22,7 +22,9 @@
         .dark-green {
             background-color: #4e904e !important;
         }
-        
+        .dark-red {
+            background-color: #f00 !important;
+        }
         .table th, .table td {
             white-space: nowrap;  /* 防止所有列换行 */
             vertical-align: middle;  /* 垂直居中对齐 */
@@ -75,6 +77,10 @@
         
         .table-hover tbody tr.dark-green:hover {
             background-color: #4e904e !important;
+        }
+
+        .table-hover tbody tr.dark-red:hover {
+            background-color: #f00 !important;
         }
         
         /* 标题容器样式 */
@@ -169,7 +175,7 @@
                         </th>
                         <th class="number-cell">市盈率估值买点</th>
                         <th class="number-cell">净利润估值买点</th>
-                        <th class="number-cell">现价/买点%</th>
+                        <th class="number-cell">市盈率卖点</th>
                         <th class="number-cell">市盈率(TTM)</th>
                         <th class="number-cell">合理市盈率</th>
                         <th class="number-cell">股息率(TTM)</th>
@@ -273,18 +279,24 @@
             data.forEach(stock => {
                 const row = document.createElement('tr');
                 const latest_price = parseFloat(stock['最新价']) || 0;
+                const pe_ttm = parseFloat(stock['市盈率(TTM)']) || 0;
                 const pe_buy_point = parseFloat(stock['市盈率估值买点']) || 0;
                 const profit_buy_point = parseFloat(stock['净利润估值买点']) || 0;
-                
+                const pe_sell_point = parseFloat(stock['PE_90分位']) || 0;
+
                 const isLightGreen = latest_price <= pe_buy_point || 
                                    latest_price <= profit_buy_point;
                 const isDarkGreen = latest_price <= pe_buy_point && 
                                   latest_price <= profit_buy_point;
                 
+                const isDarkRed = pe_sell_point <= pe_ttm;
+
                 if (isDarkGreen) {
                     row.classList.add('dark-green');
                 } else if (isLightGreen) {
                     row.classList.add('light-green');
+                } else if (isDarkRed) {
+                    row.classList.add('dark-red');
                 }
 
                 row.innerHTML = `
@@ -296,7 +308,7 @@
                     <td class="number-cell">${formatNumber(parseFloat(stock['净利润估值']))}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['市盈率估值买点']))}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['净利润估值买点']))}</td>
-                    <td class="number-cell">${stock['现价/买点%']}</td>
+                    <td class="number-cell">${formatNumber(parseFloat(stock['PE_90分位']))}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['市盈率(TTM)']))}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['合理市盈率']))}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['股息率(TTM)']))}%</td>

@@ -52,9 +52,9 @@ last_date = {"date_w": date_w, "date_d": date_d}
 df["市盈率估值买点%"] = ((df["最新价"] / df["市盈率估值买点"] - 1) * 100).astype(int)
 df["净利润估值买点%"] = ((df["最新价"] / df["净利润估值买点"] - 1) * 100).astype(int)
 # 合并为新的列
-df["现价/买点%"] = (
-    df["市盈率估值买点%"].astype(str) + "|" + df["净利润估值买点%"].astype(str)
-)
+# df["现价/买点%"] = (
+#     df["市盈率估值买点%"].astype(str) + "|" + df["净利润估值买点%"].astype(str)
+# )
 
 
 # 显示结果
@@ -68,14 +68,14 @@ last_df = df[
         "最新价",
         "市盈率估值买点",
         "净利润估值买点",
-        "现价/买点%",
+        "市盈率90分位(w)",
         "市盈率(TTM)",
         "合理市盈率",
         "股息率(TTM)",
         "fix_预测净利润(亿)(w)",
     ]
 ].copy()
-last_df = last_df.rename(columns={"fix_预测净利润(亿)(w)": "预测净利润(3Y)"})
+last_df = last_df.rename(columns={"fix_预测净利润(亿)(w)": "预测净利润(3Y)","市盈率90分位(w)":"PE_90分位"})
 
 last_df["日期"] = pd.to_datetime(last_df["日期"]).dt.strftime("%Y-%m-%d")
 # 转换为JSON格式
