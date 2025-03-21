@@ -146,14 +146,14 @@ files = [
 
 [[package]]
 name = "akshare"
-version = "1.16.52"
+version = "1.16.58"
 description = "AKShare is an elegant and simple financial data interface library for Python, built for human beings!"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "akshare-1.16.52-py3-none-any.whl", hash = "sha256:6b0959da50278c93f1a6aeb035829c0c345e3ae6256b4f20d89deca4021a9b48"},
-    {file = "akshare-1.16.52.tar.gz", hash = "sha256:bd55334d0ee96a7cc90814491de505c97163de4a5999a3255512a270855215bb"},
+    {file = "akshare-1.16.58-py3-none-any.whl", hash = "sha256:546941e7e0d7b177c0b411faafe49d1762a8f733ac9a25d2559615910744d67f"},
+    {file = "akshare-1.16.58.tar.gz", hash = "sha256:24f11adcc13588324b35ec72031424b053adf7af6bd7954859782b84af62fb5a"},
 ]
 
 [package.dependencies]
@@ -165,6 +165,7 @@ html5lib = ">=1.0.1"
 jsonpath = ">=0.82"
 lxml = ">=4.2.1"
 mini-racer = {version = ">=0.12.4", markers = "platform_system != \"Linux\""}
+nest_asyncio = ">=1.6.0"
 openpyxl = ">=3.0.3"
 pandas = ">=0.25"
 py-mini-racer = {version = ">=0.6.0", markers = "platform_system == \"Linux\""}
@@ -1213,6 +1214,18 @@ files = [
 
 [package.dependencies]
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.11\""}
+
+[[package]]
+name = "nest-asyncio"
+version = "1.6.0"
+description = "Patch asyncio to allow nested event loops"
+optional = false
+python-versions = ">=3.5"
+groups = ["main"]
+files = [
+    {file = "nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c"},
+    {file = "nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe"},
+]
 
 [[package]]
 name = "numpy"
