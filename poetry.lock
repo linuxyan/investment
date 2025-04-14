@@ -146,14 +146,14 @@ files = [
 
 [[package]]
 name = "akshare"
-version = "1.16.75"
+version = "1.16.77"
 description = "AKShare is an elegant and simple financial data interface library for Python, built for human beings!"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "akshare-1.16.75-py3-none-any.whl", hash = "sha256:c3fe9d0e47db1b2e1ff4608d12cb7bd492d4fbd716d68358cdbafd3424b5a074"},
-    {file = "akshare-1.16.75.tar.gz", hash = "sha256:3aea56cf406f31e480b3f64547ddb66e7e85ae50ce74430191ac203ab2caf680"},
+    {file = "akshare-1.16.77-py3-none-any.whl", hash = "sha256:7e330514d2f851bb9938d5b469602918703951cbaa0e0961851ae39249d8a265"},
+    {file = "akshare-1.16.77.tar.gz", hash = "sha256:7f8d9f9fad15dda3d2736c3079ee4726e003701f9450574dc653e6047aa76ecc"},
 ]
 
 [package.dependencies]
