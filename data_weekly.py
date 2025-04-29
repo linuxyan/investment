@@ -50,6 +50,9 @@ def get_stock_pettm_mean(symbol, years=5):
 
         # 提取最近五年的pe_ttm数据
         pe_ttm_data = indicator_data[indicator_data.index >= five_years_ago]['pe_ttm']
+
+        # 剔除亏损年份的PE数据
+        pe_ttm_data = pe_ttm_data[pe_ttm_data > 0]
         pe_ttm_avg = pe_ttm_data.mean().round(2)
         pe_ttm_std = pe_ttm_data.std().round(2)
         latest_date = indicator_data.index.max()
