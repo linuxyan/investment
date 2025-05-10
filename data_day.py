@@ -1,6 +1,7 @@
 import datetime
 import pandas as pd
 import akshare as ak
+import time
 from retry import retry
 from config import BASIC_DATA_WEEKLY_CSV
 
@@ -23,6 +24,7 @@ def day_data_update() -> pd.DataFrame:
         print(f'Get day data : {stock[0:2]}')
         stock += get_stock_day_data(symbol=stock[0])
         basic_stock_day.append(stock)
+        time.sleep(1)
     column_names += ['最新价', '市盈率(TTM)', '股息率(TTM)', '总市值', '总股本', 'date(d)']
     stock_day_pd = pd.DataFrame(basic_stock_day, columns=column_names)
     stock_day_pd.to_pickle('data/day/last.pkl')
