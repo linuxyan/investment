@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import warnings
 import akshare as ak
 import pandas as pd
+import time
 from retry import retry
 from config import BASIC_DATA_CSV
 
@@ -20,10 +21,12 @@ def weekly_data_update() -> pd.DataFrame:
     for stock in basic_stock_list:
         print(f'Get weekly data : {stock[0:-1]}')
         pe_ttm_avg, pe_ttm_std, pe_ttm_median_90, latest_date = get_stock_pettm_mean(symbol=stock[0])
+        time.sleep(1)
         column_name, min_values = get_stock_net_profit(symbol=stock[0])
         stock += [pe_ttm_avg, pe_ttm_std, pe_ttm_median_90, latest_date]
         stock += min_values
         basic_stock_weekly.append(stock)
+        time.sleep(1)
     column_names += ['平均市盈率(5Y)(w)', '市盈率标准差(5Y)(w)', '市盈率90分位(w)', 'date(w)']
     column_names += column_name
     stock_weekly_pd = pd.DataFrame(basic_stock_weekly, columns=column_names)
