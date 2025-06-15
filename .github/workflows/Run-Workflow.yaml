@@ -67,12 +67,12 @@ jobs:
         run: |
           curl --location --request POST "https://api.day.app/TWLFNN3SKtPvTiUcXtdRbn/Github-Actions/任务执行失败,请检查."
 
-  cleanup:
+  Delete-deployment-pages-actions:
     needs: dayjob
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - name: Delete deployment github pages
+      - name: Delete deployment github pages actions
         uses: strumwolf/delete-deployment-environment@v2.3.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
