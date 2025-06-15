@@ -8,7 +8,7 @@ on:
 jobs:
   dayjob:
     if: github.event.pull_request.draft == false
-    name: day-cron-job
+    name: Get Stock Day or Week Data
     runs-on: ubuntu-latest
     env:
       WX_APPID: ${{ secrets.WX_APPID }}
