@@ -37,6 +37,7 @@ def day_data_update() -> pd.DataFrame:
 
 该函数通过调用阿尔法财经接口获取股票的日数据指标，包括基金份额、资产净值、股息率、市盈率和现价等信息。
 在获取数据时，如果未找到指定指标，将抛出异常。函数会在发生异常时重试最多5次。
+需要雪球的xq_a_token
 
 参数：
     symbol (str): 股票的代码，需添加前缀以符合接口要求。
@@ -52,7 +53,7 @@ def day_data_update() -> pd.DataFrame:
 def get_stock_day_data(symbol):
     try:
         # 获取股票日数据指标数据
-        indicator_data = ak.stock_individual_spot_xq(symbol=add_prefix(symbol),token='30d5643d079ac53935ed01427c25f3b288b4ca8e')
+        indicator_data = ak.stock_individual_spot_xq(symbol=add_prefix(symbol),token='543ccceb0be155530d8fa6d9ba077585d9a25627')
 
         items = {
             '基金份额/总股本': 'equity_cap',
