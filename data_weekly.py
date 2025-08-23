@@ -3,6 +3,8 @@ import warnings
 import akshare as ak
 import pandas as pd
 import time
+import requests
+from akshare.utils.cons import headers
 from retry import retry
 from config import BASIC_DATA_CSV
 
