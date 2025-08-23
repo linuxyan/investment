@@ -21,12 +21,12 @@ def weekly_data_update() -> pd.DataFrame:
     for stock in basic_stock_list:
         print(f'Get weekly data : {stock[0:-1]}')
         pe_ttm_avg, pe_ttm_std, pe_ttm_median_90, latest_date = get_stock_pettm_mean(symbol=stock[0])
-        time.sleep(1)
+        time.sleep(2)
         column_name, min_values = get_stock_net_profit(symbol=stock[0])
         stock += [pe_ttm_avg, pe_ttm_std, pe_ttm_median_90, latest_date]
         stock += min_values
         basic_stock_weekly.append(stock)
-        time.sleep(1)
+        time.sleep(2)
     column_names += ['平均市盈率(5Y)(w)', '市盈率标准差(5Y)(w)', '市盈率90分位(w)', 'date(w)']
     column_names += column_name
     stock_weekly_pd = pd.DataFrame(basic_stock_weekly, columns=column_names)
@@ -34,16 +34,31 @@ def weekly_data_update() -> pd.DataFrame:
     stock_weekly_pd.to_pickle(f'data/weekly/{latest_date}.pkl')
     return stock_weekly_pd
 
+def get_pe_price_eniu(symbol: str = "") -> pd.DataFrame:
+    """
+    亿牛网-历史市盈率
+    https://eniu.com/gu/sh600519
+    :return: 指定股票的市盈率数据
+    :rtype: pandas.DataFrame
+    """
+    r = requests.get(url, headers=headers)
+    temp_json = r.json()
+    temp_df = pd.DataFrame(temp_json).rename(columns={'date': 'trade_date'})
+    if len(set(["trade_date"])) <= 0:
+        raise ValueError("数据获取失败, 请检查是否输入正确的股票代码")
+    return temp_df
+
 
 @retry(delay=2, tries=5, logger=None)
 def get_stock_pettm_mean(symbol, years=5):
     try:
-        # 获取股票指标数据
+        获取股票指标数据
         if symbol.lower().startswith('hk'):  # 处理港股数据
             indicator_data = ak.stock_hk_valuation_baidu(symbol=symbol[2:], indicator="市盈率(TTM)", period="全部")
             indicator_data = indicator_data.rename(columns={'date': 'trade_date', 'value': 'pe_ttm'})
         else:
-            indicator_data = ak.stock_a_indicator_lg(symbol=symbol)
+            # indicator_data = ak.stock_a_indicator_lg(symbol=symbol)
+            indicator_data = get_pe_price_eniu(symbol=symbol)
 
         indicator_data.set_index('trade_date', inplace=True)
         today = datetime.today().date()
