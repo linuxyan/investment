@@ -52,7 +52,7 @@ def get_pe_price_eniu(symbol: str = "") -> pd.DataFrame:
 @retry(delay=2, tries=5, logger=None)
 def get_stock_pettm_mean(symbol, years=5):
     try:
-        获取股票指标数据
+        # 获取股票指标数据
         if symbol.lower().startswith('hk'):  # 处理港股数据
             indicator_data = ak.stock_hk_valuation_baidu(symbol=symbol[2:], indicator="市盈率(TTM)", period="全部")
             indicator_data = indicator_data.rename(columns={'date': 'trade_date', 'value': 'pe_ttm'})
