@@ -5,6 +5,7 @@ import pandas as pd
 import time
 import requests
 from akshare.utils.cons import headers
+from data_day import add_prefix
 from retry import retry
 from config import BASIC_DATA_CSV
 
@@ -23,12 +24,12 @@ def weekly_data_update() -> pd.DataFrame:
     for stock in basic_stock_list:
         print(f'Get weekly data : {stock[0:-1]}')
         pe_ttm_avg, pe_ttm_std, pe_ttm_median_90, latest_date = get_stock_pettm_mean(symbol=stock[0])
-        time.sleep(2)
+        time.sleep(1)
         column_name, min_values = get_stock_net_profit(symbol=stock[0])
         stock += [pe_ttm_avg, pe_ttm_std, pe_ttm_median_90, latest_date]
         stock += min_values
         basic_stock_weekly.append(stock)
-        time.sleep(2)
+        time.sleep(1)
     column_names += ['平均市盈率(5Y)(w)', '市盈率标准差(5Y)(w)', '市盈率90分位(w)', 'date(w)']
     column_names += column_name
     stock_weekly_pd = pd.DataFrame(basic_stock_weekly, columns=column_names)
@@ -43,9 +44,12 @@ def get_pe_price_eniu(symbol: str = "") -> pd.DataFrame:
     :return: 指定股票的市盈率数据
     :rtype: pandas.DataFrame
     """
+    code = add_prefix(symbol).lower()
+    url = f"https://eniu.com/chart/pea/{code}/t/all"
     r = requests.get(url, headers=headers)
     temp_json = r.json()
     temp_df = pd.DataFrame(temp_json).rename(columns={'date': 'trade_date'})
+    temp_df['trade_date'] = pd.to_datetime(temp_df['trade_date']).dt.date
     if len(set(["trade_date"])) <= 0:
         raise ValueError("数据获取失败, 请检查是否输入正确的股票代码")
     return temp_df
@@ -125,7 +129,7 @@ def get_stock_net_profit(symbol):
 
 if __name__ == "__main__":
     today = datetime.now()
-    if today.weekday() == 5:    # 周六
+    if today.weekday() == 4:    # 周五
         stock_weekly_pd = weekly_data_update()
         print(stock_weekly_pd)
     else:
