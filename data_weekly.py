@@ -129,7 +129,7 @@ def get_stock_net_profit(symbol):
 
 if __name__ == "__main__":
     today = datetime.now()
-    if today.weekday() == 4:    # 周五
+    if today.weekday() == 5:    # 周六
         stock_weekly_pd = weekly_data_update()
         print(stock_weekly_pd)
     else:
