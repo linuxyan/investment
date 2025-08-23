@@ -46,7 +46,7 @@ def get_pe_price_eniu(symbol: str = "") -> pd.DataFrame:
     """
     code = add_prefix(symbol).lower()
     url = f"https://eniu.com/chart/pea/{code}/t/all"
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=headers, timeout=10)
     temp_json = r.json()
     temp_df = pd.DataFrame(temp_json).rename(columns={'date': 'trade_date'})
     temp_df['trade_date'] = pd.to_datetime(temp_df['trade_date']).dt.date
