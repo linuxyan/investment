@@ -53,7 +53,7 @@ def day_data_update() -> pd.DataFrame:
 def get_stock_day_data(symbol):
     try:
         # 获取股票日数据指标数据
-        indicator_data = ak.stock_individual_spot_xq(symbol=add_prefix(symbol),token='5494c5941a3269581caca198ead5578ea9e54047')
+        indicator_data = ak.stock_individual_spot_xq(symbol=add_prefix(symbol),token='763e572cc94be8a02cf3024d568c77e290b2d695')
 
         items = {
             '基金份额/总股本': 'equity_cap',
