@@ -768,5 +768,10 @@
         "date": "2025-09-10",
         "portfolio_value": 4998163.5,
         "investment_cost": 4100000.0
+    },
+    {
+        "date": "2025-09-11",
+        "portfolio_value": 4976161.0,
+        "investment_cost": 4100000.0
     }
 ]

@@ -146,19 +146,19 @@ files = [
 
 [[package]]
 name = "akshare"
-version = "1.17.46"
+version = "1.17.48"
 description = "AKShare is an elegant and simple financial data interface library for Python, built for human beings!"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "akshare-1.17.46-py3-none-any.whl", hash = "sha256:138e4ae74a071b7ca28afd7cd700ee6e76ecfa5933d085dc019549708c2c889f"},
-    {file = "akshare-1.17.46.tar.gz", hash = "sha256:2673a7e829b1ad4a338e4ac5ee95daf84e68dfcbefa5840cb37819e5ced4349d"},
+    {file = "akshare-1.17.48-py3-none-any.whl", hash = "sha256:7a82a02c417ab5d3d3db01a88cc82e0f49cd5f8b13c9aa70a5770cf0fc93fbde"},
+    {file = "akshare-1.17.48.tar.gz", hash = "sha256:e05c06a0f8e4a62a8f0d3c8221b0a221dd08fc3f1a647f07bef5311b8a433f6d"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.11.13"
-akracer = {version = ">=0.0.13", extras = ["py-mini-racer"], markers = "platform_system == \"Linux\""}
+akracer = {version = ">=0.0.13", markers = "platform_system == \"Linux\""}
 beautifulsoup4 = ">=4.9.1"
 decorator = ">=4.4.2"
 html5lib = ">=1.0.1"
