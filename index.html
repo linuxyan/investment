@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/investment_valuation/stock.png" type="image/x-icon">
+    <link rel="icon" href="stock.png" type="image/x-icon">
     <title>股票估值表</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -229,7 +229,7 @@
         async function loadStockData() {
             try {
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/investment_valuation/data/all_stocks_valuation.json?t=${timestamp}`);
+                const response = await fetch(`data/all_stocks_valuation.json?t=${timestamp}`);
                 tableData = await response.json();
                 renderTable(tableData);
                 initSortButtons();
@@ -241,7 +241,7 @@
         async function loadLastUpdateTime() {
             try {
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/investment_valuation/data/last_date.json?t=${timestamp}`);
+                const response = await fetch(`data/last_date.json?t=${timestamp}`);
                 const data = await response.json();
                 document.getElementById('lastUpdateTime').textContent = data.date || '-';
             } catch (error) {
@@ -294,7 +294,7 @@
 
                 row.innerHTML = `
                     <td>${stock['date'] || '-'}</td>
-                    <td><a href="/investment_valuation/history_valuation.html?symbol=${stock['symbol']}">${stock['symbol']}</a></td>
+                    <td><a href="history_valuation.html?symbol=${stock['symbol']}">${stock['symbol']}</a></td>
                     <td>${stock['name']}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['current_close']))}</td>
                     <td class="number-cell">${formatNumber(parseFloat(stock['pe_valuation']))}</td>
