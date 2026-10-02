@@ -1988,5 +1988,10 @@
         "date": "2026-10-01",
         "portfolio_value": 3662560.0,
         "investment_cost": 4100000.0
+    },
+    {
+        "date": "2026-10-02",
+        "portfolio_value": 3620616.0,
+        "investment_cost": 4100000.0
     }
 ]
